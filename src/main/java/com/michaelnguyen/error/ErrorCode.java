@@ -12,6 +12,7 @@ public enum ErrorCode {
 	USER_EXIST(1001, "User is existed", HttpStatus.BAD_REQUEST),
 	USER_NOT_ACTIVATED(1005, "User not activated", HttpStatus.BAD_REQUEST),
 	EMAIL_EXIST(1003, "Email is existed", HttpStatus.BAD_REQUEST),
+	EMAIL_NOT_EXIST(10031, "Email is not existed", HttpStatus.BAD_REQUEST),
 
 	UNAUTHENTICATED(1004, "Email not found or Password is invalid", HttpStatus.UNAUTHORIZED),
 	UNAUTHORIZED(1005, "You do not have permission", HttpStatus.FORBIDDEN),
