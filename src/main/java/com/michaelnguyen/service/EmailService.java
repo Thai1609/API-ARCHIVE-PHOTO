@@ -1,12 +1,14 @@
 package com.michaelnguyen.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailService {
@@ -14,17 +16,16 @@ public class EmailService {
 	@Autowired
 	private JavaMailSender mailSender;
 
-	public void sendSimpleEmail(String toEmail, String subject, String body) {
+	@Async("emailTaskExecutor")
+	public void sendSimpleEmail(String toEmail, String subject, String body) throws MessagingException {
 		try {
-			// Validate email address
-			InternetAddress emailAddr = new InternetAddress(toEmail);
-			emailAddr.validate();
+			// Tạo email với MimeMessage
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-			SimpleMailMessage message = new SimpleMailMessage();
-			message.setTo(toEmail);
-			message.setSubject(subject);
-			message.setText(body);
-			message.setFrom("thaixalem367@gmail.com");
+			helper.setTo(toEmail);
+			helper.setSubject(subject);
+			helper.setText(body, true); // true để gửi nội dung HTML
 
 			mailSender.send(message);
 
