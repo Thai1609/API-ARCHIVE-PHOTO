@@ -15,13 +15,17 @@ public class FirebaseConfig {
 
 	@Bean
 	FirebaseApp initializeFirebaseApp() throws IOException {
-		FileInputStream serviceAccount = new FileInputStream(
-				"src/main/resources/data-images-12d9b-firebase-adminsdk-pghiq-3131317fc4.json");
+		if (FirebaseApp.getApps().isEmpty()) {
+			FileInputStream serviceAccount = new FileInputStream(
+					"src/main/resources/data-images-12d9b-firebase-adminsdk-pghiq-3131317fc4.json");
 
-		FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccount))
-				.setStorageBucket("data-images-12d9b.appspot.com").build();
+			FirebaseOptions options = FirebaseOptions.builder()
+					.setCredentials(GoogleCredentials.fromStream(serviceAccount))
+					.setStorageBucket("data-images-12d9b.appspot.com").build();
 
-		return FirebaseApp.initializeApp(options);
+			return FirebaseApp.initializeApp(options);
+		}
+		return FirebaseApp.getInstance();
 	}
 
 }

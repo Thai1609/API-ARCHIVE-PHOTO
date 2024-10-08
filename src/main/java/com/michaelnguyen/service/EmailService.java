@@ -22,7 +22,8 @@ public class EmailService {
 			// Tạo email với MimeMessage
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
+			
+	        helper.setFrom("Archive Photo <michael.nguyen@gmail.com>");
 			helper.setTo(toEmail);
 			helper.setSubject(subject);
 			helper.setText(body, true); // true để gửi nội dung HTML

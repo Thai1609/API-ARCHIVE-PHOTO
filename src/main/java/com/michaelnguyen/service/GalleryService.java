@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.michaelnguyen.dto.request.GalleryRequest;
 import com.michaelnguyen.dto.response.GalleryResponse;
 import com.michaelnguyen.entity.Tag;
-import com.michaelnguyen.entity.Gallery;
 import com.michaelnguyen.firebase.UploadService;
 import com.michaelnguyen.mapper.IGalleryMapper;
 import com.michaelnguyen.mapper.ITagMapper;
