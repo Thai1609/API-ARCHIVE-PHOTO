@@ -40,9 +40,10 @@ import com.michaelnguyen.service.UserService;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-	private String[] PUBLIC_ENDPOINT = { "/api/auth/**", "/api/permissions/**", "/api/roles/**", "/api/product/**",
-			"/api/gallery/**" };
+	private String[] PUBLIC_ENDPOINT = { "/api/auth/**" };
 
+//	private String[] PUBLIC_ENDPOINT = { "/api/auth/**", "/api/permissions/**", "/api/roles/**", "/api/product/**",
+//			"/api/gallery/**" };
 	@Autowired
 	private IUserRepository iUserRepository;
 

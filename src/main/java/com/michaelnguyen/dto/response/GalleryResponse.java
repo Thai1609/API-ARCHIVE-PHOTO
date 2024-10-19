@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class GalleryResponse {
- 
+	private String id;
+	
 	private String nameImage;
 
 	private String urlImage;
