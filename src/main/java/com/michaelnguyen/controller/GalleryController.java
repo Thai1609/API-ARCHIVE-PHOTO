@@ -1,7 +1,5 @@
 package com.michaelnguyen.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -27,10 +25,10 @@ public class GalleryController {
 
 	@Autowired
 	private GalleryService galleryService;
-
-	@PostMapping(value = "/upload-image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = {
+	
+ 	@PostMapping(value = "/upload-image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
-	public GalleryResponse createProduct(@RequestPart("file") List<MultipartFile> multipartFile,
+	public GalleryResponse createProduct(@RequestPart("file") MultipartFile[] multipartFile,
 			@RequestPart GalleryRequest request) {
 
 		return galleryService.uploadImage(multipartFile, request);
@@ -52,10 +50,9 @@ public class GalleryController {
 	}
 
 	@GetMapping("/get-all")
-	public Page<Gallery> getGalleries(
-			@RequestParam(defaultValue = "0") int page,
+	public Page<Gallery> getGalleries(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
-		
+
 		return galleryService.getGalleries(page, size);
 	}
 }

@@ -29,6 +29,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.entity.User;
@@ -66,7 +67,7 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain securityFilterChain(HttpSecurity http,  CorsConfigurationSource corsConfigurationSource) throws Exception {
 
 		http.authorizeHttpRequests(authorize -> {
 			authorize.requestMatchers(PUBLIC_ENDPOINT).permitAll().anyRequest().authenticated();
@@ -86,7 +87,7 @@ public class WebSecurityConfig {
 						.jwtAuthenticationConverter(jwtAuthenticationConverter()))
 				.authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
-		http.csrf(csrf -> csrf.disable());
+		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource));
 		return http.build();
 	}
 

@@ -36,16 +36,15 @@ public class GalleryService {
 	@Autowired
 	private UploadService uploadService;
 
-	public GalleryResponse uploadImage(List<MultipartFile> multipartFile, GalleryRequest request) {
+	public GalleryResponse uploadImage(MultipartFile[] multipartFile, GalleryRequest request) {
 		var gallery = iGalleryMapper.toGallery(request);
 
-		Tag tag = iTagRepository.findById(request.getTag()).orElseThrow();
-
-		for (int i = 0; i < multipartFile.size(); i++) {
+		Tag tag = iTagRepository.findTagByName(request.getTag()).orElseThrow();
+		for (MultipartFile file : multipartFile) {
 
 			gallery.setId(iGalleryRepository.newIdGallery());
-			gallery.setNameImage(multipartFile.get(i).getOriginalFilename());
-			gallery.setUrlImage(uploadService.upload(multipartFile.get(i), "galleries/" + tag.getName() + "/"));
+			gallery.setNameImage(request.getNameImage());
+			gallery.setUrlImage(uploadService.upload(file, "galleries/" + tag.getName() + "/"));
 			gallery.setTag(tag);
 
 			gallery = iGalleryRepository.save(gallery);
