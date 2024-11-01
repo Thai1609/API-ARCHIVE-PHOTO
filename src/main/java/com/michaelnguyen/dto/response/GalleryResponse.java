@@ -11,10 +11,17 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GalleryResponse {
 	private String id;
-	
+
 	private String nameImage;
 
 	private String urlImage;
-	
+
 	private String status;
+	
+	private String nameTag;
+	
+	private String description;
+	
+	private Long user_id;
+
 }

@@ -1,13 +1,13 @@
 package com.michaelnguyen.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,25 +20,24 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Builder
-@Table(name = "gallery")
-public class Gallery {
+public class Review {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String nameImage;
+	private int rating; // For example, 1-5 stars
 
-	private String urlImage;
+	private String comment;
 
-	private String status;
-	
-	private String description;
+	private LocalDateTime createdDate = LocalDateTime.now();
 
 	@ManyToOne
-	@JsonBackReference
-	private Tag tag;
-
-	@ManyToOne
-	@JsonBackReference
+	@JoinColumn(name = "user_id")
 	private User user;
+
+	@ManyToOne
+	@JoinColumn(name = "gallery_id")
+	private Gallery gallery;
+	
+	 
 }

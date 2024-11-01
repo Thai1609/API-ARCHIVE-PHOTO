@@ -42,20 +42,26 @@ public class GalleryController {
 //	}
 
 	@GetMapping("/{id}")
-	ApiResponse<?> getImageById(@PathVariable int id) {
+	ApiResponse<?> getImageById(@PathVariable Long id) {
 		return ApiResponse.builder().result(galleryService.getImageById(id)).build();
 	}
 
 	@DeleteMapping("/{id}")
-	public void deleteImage(@PathVariable Integer id) {
+	public void deleteImage(@PathVariable Long id) {
 		galleryService.deleteImage(id);
 	}
 
 	@GetMapping("/get-all")
-	public Page<Gallery> getGalleries(
-			@RequestParam(defaultValue = "0") int page,
+	public Page<Gallery> getAllGalleries(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
-		
-		return galleryService.getGalleries(page, size);
+
+		return galleryService.getAllGalleries(page, size);
+	}
+
+	@GetMapping("/my-gallery")
+	public Page<Gallery> getAllGalleriesById(@RequestParam Long userId, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size) {
+
+		return galleryService.getAllGalleriesById(userId, page, size);
 	}
 }
