@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GalleryRequest {
 	private String nameImage;
-	private String tag;
+	private String nameTag;
+	private Long userId;
 }
