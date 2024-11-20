@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserCreationRequest {
+public class GoogleUserRequest {
 	private String email;
-	private String password;
-	private String provider;
-	private String providerId;
+ 	private String googleId;
 }

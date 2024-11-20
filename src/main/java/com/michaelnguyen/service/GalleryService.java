@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +19,6 @@ import com.michaelnguyen.mapper.IGalleryMapper;
 import com.michaelnguyen.mapper.ITagMapper;
 import com.michaelnguyen.repository.IGalleryRepository;
 import com.michaelnguyen.repository.ITagRepository;
-import com.michaelnguyen.repository.IUserProfileRepository;
 import com.michaelnguyen.repository.IUserRepository;
 
 @Service

@@ -32,12 +32,11 @@ public class Review {
 	private LocalDateTime createdDate = LocalDateTime.now();
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn
 	private User user;
 
 	@ManyToOne
-	@JoinColumn(name = "gallery_id")
+	@JoinColumn
 	private Gallery gallery;
-	
-	 
+
 }

@@ -1,6 +1,6 @@
 package com.michaelnguyen.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -11,7 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -39,9 +38,7 @@ public class UserProfile {
 	@Size(min = 3, message = "")
 	private String lastName;
 
-	@Lob
-	@Column(columnDefinition = "longblob")
-	private byte[] image;
+	private String avatarUrl;
 
 	private String address;
 
@@ -50,18 +47,17 @@ public class UserProfile {
 	private String phone;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	@Temporal(TemporalType.DATE)
-	private Date dob;
+	private LocalDateTime dob;
 
-	private Date created_at;
+	@Column(name = "created_at", nullable = false, updatable = false)
+	private LocalDateTime createdAt = LocalDateTime.now();
 
-	private Date modified_at;
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
 
 	@OneToOne
 	@JoinColumn(name = "user_id")
 	@JsonBackReference
 	private User user;
-	
-	
 
 }

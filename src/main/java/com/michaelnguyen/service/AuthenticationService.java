@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.michaelnguyen.dto.request.AuthenticationRequest;
+import com.michaelnguyen.dto.request.GoogleUserRequest;
 import com.michaelnguyen.dto.request.IntrospectRequest;
+import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.response.AuthenticationResponse;
 import com.michaelnguyen.dto.response.IntrospectResponse;
 import com.michaelnguyen.entity.User;
 import com.michaelnguyen.error.AppException;
 import com.michaelnguyen.error.ErrorCode;
+import com.michaelnguyen.mapper.ICreationAccount;
 import com.michaelnguyen.repository.IUserRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -60,23 +63,41 @@ public class AuthenticationService {
 
 	}
 
-	public AuthenticationResponse authenticate(AuthenticationRequest request) {
+	// Login with email and password
+	public AuthenticationResponse authenticateWithEmail(LoginRequest request) {
+		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), "", "");
 
-		if (!iUserRepository.existsByEmail(request.getEmail()))
-			throw new AppException(ErrorCode.USER_NOT_EXIST);
+		if (user.isPresent() && passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
 
-		User user = iUserRepository.findByEmail(request.getEmail());
+			var token = generateToken(user.get());
 
-		if (!user.isEnabled())
-			throw new AppException(ErrorCode.USER_NOT_ACTIVATED);
-		
-		boolean authentication = passwordEncoder.matches(request.getPassword(), user.getPassword());
-		if (!authentication)
-			throw new AppException(ErrorCode.UNAUTHENTICATED);
+			return AuthenticationResponse.builder().token(token).authenticated(true).build();
 
-		var token = generateToken(user);
+		}
+		throw new RuntimeException("Invalid email or password");
 
+	}
+
+	// Login with Google
+	public AuthenticationResponse authenticateWithGoogle(GoogleUserRequest request) {
+		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), "GOOGLE", request.getGoogleId());
+
+		if (user.isPresent()) {
+			var token = generateToken(user.get());
+			return AuthenticationResponse.builder().token(token).authenticated(true).build();
+		}
+
+		// Register new user if not found
+		User newUser = new User();
+		newUser.setEmail(request.getEmail());
+		newUser.setProvider("GOOGLE");
+		newUser.setProviderId(request.getGoogleId());
+
+		newUser = iUserRepository.save(newUser);
+
+		var token = generateToken(newUser);
 		return AuthenticationResponse.builder().token(token).authenticated(true).build();
+
 	}
 
 //	public AuthenticationResponse refreshToken(AuthenticationRequest request) {

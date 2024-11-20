@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,26 +44,23 @@ public class UserService {
 	private UserProfileService userProfileService;
 
 	public UserResponse createUser(UserCreationRequest request) {
+		return null;
 
-		if (iUserRepository.existsByEmail(request.getEmail()))
-			throw new AppException(ErrorCode.EMAIL_EXIST);
-
-		User user = iUserMapper.toUser(request);
-
-		if (request.getGoogleId() == null) {
-			user.setPassword(passwordEncoder.encode(request.getPassword()));
-		}
-
-		var roles = iRoleRepository.findAllById(Arrays.asList("USER"));
-		user.setRoles(new HashSet<>(roles));
-
-		iUserMapper.toUserResponse(iUserRepository.save(user));
-
-		User user1 = iUserRepository.findByEmail(request.getEmail());
-
-		userProfileService.createUserProfile(user1.getId());
-
-		return iUserMapper.toUserResponse(user1);
+//		// Create a new user
+//		User newUser = new User();
+//		newUser.setEmail(request.getEmail());
+//		newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+//
+//		// Save the new user
+//		Optional<User> savedUser = iUserRepository.save(newUser);
+//		var roles = iRoleRepository.findAllById(Arrays.asList("USER"));
+//		savedUser.setRoles(new HashSet<>(roles));
+//		iUserMapper.toUserResponse(iUserRepository.save(savedUser));
+//
+//		savedUser = iUserRepository.findByEmail(request.getEmail());
+//		userProfileService.createUserProfile(savedUser.getId());
+//
+//		return iUserMapper.toUserResponse(savedUser);
 
 	}
 
@@ -88,10 +86,9 @@ public class UserService {
 	public UserResponse getInfo() {
 		var context = SecurityContextHolder.getContext().getAuthentication();
 		String name = context.getName();
+ 		Optional<User> user = iUserRepository.findByOptions(name,null, null);
 
-		User user = iUserRepository.findByEmail(name);
-
-		return iUserMapper.toUserResponse(user);
+		return iUserMapper.toUserResponse(user.get());
 	}
 
 	public UserResponse getUserById(Long id) {

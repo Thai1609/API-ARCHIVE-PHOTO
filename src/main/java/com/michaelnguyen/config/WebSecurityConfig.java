@@ -2,7 +2,6 @@ package com.michaelnguyen.config;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,14 +18,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import com.michaelnguyen.service.CustomOidcUserService;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-	@Autowired
-	private CustomOidcUserService customOidcUserService;
 
 	private String[] PUBLIC_ENDPOINT = { "/api/auth/**" };
 
@@ -54,8 +49,8 @@ public class WebSecurityConfig {
 
 		http.authorizeHttpRequests(authorize -> {
 			authorize.requestMatchers(PUBLIC_ENDPOINT).permitAll().anyRequest().authenticated();
-		}).oauth2Login(oauth2Login -> oauth2Login.loginPage("/login")
-				.userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService)));
+		}).oauth2Login(oauth2 -> oauth2.loginPage("/login").defaultSuccessUrl("/api/auth/success", true)
+				.failureUrl("/login?error=true"));
 
 		http.oauth2ResourceServer(oauth2 -> oauth2
 				.jwt(jwtConfigurer -> jwtConfigurer.decoder(JwtDecoder())

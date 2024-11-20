@@ -13,7 +13,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +26,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Builder
-@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "email" }) })
+@Table(name = "users")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +37,9 @@ public class User {
 
 	private String password;
 
-	private String googleId;
+	private String provider;
+
+	private String providerId;
 
 	private boolean enabled;
 
@@ -48,8 +49,9 @@ public class User {
 
 	@ManyToMany
 	private Set<Role> roles;
-	
+
 	@OneToMany
 	@JsonManagedReference
 	private Set<Gallery> galleries;
+
 }

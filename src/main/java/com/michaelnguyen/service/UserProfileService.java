@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.michaelnguyen.dto.request.UserProfileUpdateRequest;
 import com.michaelnguyen.dto.response.UserProfileResponse;
@@ -41,7 +40,7 @@ public class UserProfileService {
 
 //	@PostAuthorize("returnObject.email==authentication.name")
 	public UserProfileResponse createUserProfile(Long id) {
-		 
+
 		UserProfile userProfile = new UserProfile();
 
 		userProfile.setUser(iUserRepository.findById(id).orElseThrow());
@@ -65,20 +64,6 @@ public class UserProfileService {
 		request.setModified_at(new Date());
 
 		iUserProfileMapper.updateUserProfile(userProfile, request);
-
-		return iUserProfileMapper.toUserProfileResponse(iUserProfileRepository.save(userProfile));
-
-	}
-
-	public UserProfileResponse uploadImgProfile(Long id, MultipartFile imageFile) throws IOException {
-		User user = iUserRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
-
-		UserProfile userProfile = iUserProfileRepository.findById(user.getUserProfile().getId())
-				.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
-
-		if (imageFile != null) {
-			userProfile.setImage(imageFile.getBytes());
-		}
 
 		return iUserProfileMapper.toUserProfileResponse(iUserProfileRepository.save(userProfile));
 
