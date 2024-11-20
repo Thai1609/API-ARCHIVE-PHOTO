@@ -3,7 +3,9 @@ package com.michaelnguyen.service;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.StringJoiner;
 
@@ -19,9 +21,7 @@ import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.response.AuthenticationResponse;
 import com.michaelnguyen.dto.response.IntrospectResponse;
 import com.michaelnguyen.entity.User;
-import com.michaelnguyen.error.AppException;
-import com.michaelnguyen.error.ErrorCode;
-import com.michaelnguyen.mapper.ICreationAccount;
+import com.michaelnguyen.repository.IRoleRepository;
 import com.michaelnguyen.repository.IUserRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -42,6 +42,11 @@ public class AuthenticationService {
 	IUserRepository iUserRepository;
 
 	@Autowired
+	IRoleRepository iRoleRepository;
+
+	@Autowired
+	private UserProfileService userProfileService;
+
 	private PasswordEncoder passwordEncoder;
 
 	@NonFinal
@@ -80,10 +85,10 @@ public class AuthenticationService {
 
 	// Login with Google
 	public AuthenticationResponse authenticateWithGoogle(GoogleUserRequest request) {
-		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), "GOOGLE", request.getGoogleId());
+		Optional<User> userCheck = iUserRepository.findByOptions(request.getEmail(), "GOOGLE", request.getGoogleId());
 
-		if (user.isPresent()) {
-			var token = generateToken(user.get());
+		if (userCheck.isPresent()) {
+			var token = generateToken(userCheck.get());
 			return AuthenticationResponse.builder().token(token).authenticated(true).build();
 		}
 
@@ -93,9 +98,16 @@ public class AuthenticationService {
 		newUser.setProvider("GOOGLE");
 		newUser.setProviderId(request.getGoogleId());
 
+		var roles = iRoleRepository.findAllById(Arrays.asList("USER"));
+		newUser.setRoles(new HashSet<>(roles));
+
 		newUser = iUserRepository.save(newUser);
 
-		var token = generateToken(newUser);
+		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), "GOOGLE", request.getGoogleId());
+
+		userProfileService.createUserProfile(user.get().getId());
+
+		var token = generateToken(user.get());
 		return AuthenticationResponse.builder().token(token).authenticated(true).build();
 
 	}
