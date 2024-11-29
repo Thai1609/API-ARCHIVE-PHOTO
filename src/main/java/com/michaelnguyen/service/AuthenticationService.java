@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.michaelnguyen.dto.request.GoogleUserRequest;
+import com.michaelnguyen.dto.request.LoginWithProviderRequest;
 import com.michaelnguyen.dto.request.IntrospectRequest;
 import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.response.AuthenticationResponse;
@@ -84,8 +84,9 @@ public class AuthenticationService {
 	}
 
 	// Login with Google
-	public AuthenticationResponse authenticateWithGoogle(GoogleUserRequest request) {
-		Optional<User> userCheck = iUserRepository.findByOptions(request.getEmail(), "GOOGLE", request.getGoogleId());
+	public AuthenticationResponse authenticateWithGoogle(LoginWithProviderRequest request) {
+		Optional<User> userCheck = iUserRepository.findByOptions(request.getEmail(), request.getProvider(),
+				request.getProviderId());
 
 		if (userCheck.isPresent()) {
 			var token = generateToken(userCheck.get());
@@ -95,15 +96,16 @@ public class AuthenticationService {
 		// Register new user if not found
 		User newUser = new User();
 		newUser.setEmail(request.getEmail());
-		newUser.setProvider("GOOGLE");
-		newUser.setProviderId(request.getGoogleId());
+		newUser.setProvider(request.getProvider());
+		newUser.setProviderId(request.getProviderId());
 
 		var roles = iRoleRepository.findAllById(Arrays.asList("USER"));
 		newUser.setRoles(new HashSet<>(roles));
 
 		newUser = iUserRepository.save(newUser);
 
-		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), "GOOGLE", request.getGoogleId());
+		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), request.getProvider(),
+				request.getProviderId());
 
 		userProfileService.createUserProfile(user.get().getId());
 

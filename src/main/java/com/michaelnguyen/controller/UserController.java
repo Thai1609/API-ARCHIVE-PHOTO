@@ -5,11 +5,13 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.michaelnguyen.dto.request.UserInforRequest;
 import com.michaelnguyen.dto.request.UserProfileUpdateRequest;
 import com.michaelnguyen.dto.request.UserUpdateRequest;
 import com.michaelnguyen.dto.response.ApiResponse;
@@ -28,9 +30,9 @@ public class UserController {
 	@Autowired
 	private UserProfileService userProfileService;
 
-	@GetMapping("/my-info")
-	ApiResponse<?> getInfo() {
-		return ApiResponse.builder().result(userService.getInfo()).build();
+	@PostMapping("/my-info")
+	ApiResponse<?> getInfo(@RequestBody UserInforRequest request) {
+		return ApiResponse.builder().result(userService.getInfo(request)).build();
 	}
 
 	@PutMapping("/{id}/update-password")

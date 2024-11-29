@@ -1,8 +1,6 @@
 package com.michaelnguyen.service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.michaelnguyen.dto.request.UserCreationRequest;
+import com.michaelnguyen.dto.request.UserInforRequest;
 import com.michaelnguyen.dto.request.UserUpdateRequest;
 import com.michaelnguyen.dto.response.UserResponse;
 import com.michaelnguyen.entity.User;
@@ -83,10 +82,12 @@ public class UserService {
 	}
 
 	@PostAuthorize("returnObject.email==authentication.name")
-	public UserResponse getInfo() {
-		var context = SecurityContextHolder.getContext().getAuthentication();
-		String name = context.getName();
- 		Optional<User> user = iUserRepository.findByOptions(name,null, null);
+	public UserResponse getInfo(UserInforRequest request) {
+		String email = request.getEmail();
+		String provider = request.getProvider().isEmpty() ? null : request.getProvider();
+		String providerId = request.getProviderId().isEmpty() ? null : request.getProviderId();
+		
+		Optional<User> user = iUserRepository.findByOptions(email, provider, providerId);
 
 		return iUserMapper.toUserResponse(user.get());
 	}

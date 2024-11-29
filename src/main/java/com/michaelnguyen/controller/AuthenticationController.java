@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.michaelnguyen.dto.request.GoogleUserRequest;
+import com.michaelnguyen.dto.request.LoginWithProviderRequest;
 import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.response.ApiResponse;
@@ -50,7 +50,7 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/google")
-	ApiResponse<AuthenticationResponse> authenticateWithGoogle(@RequestBody GoogleUserRequest request) {
+	ApiResponse<AuthenticationResponse> authenticateWithGoogle(@RequestBody LoginWithProviderRequest request) {
 		var result = authenticationService.authenticateWithGoogle(request);
 
 		return ApiResponse.<AuthenticationResponse>builder().result(result).build();

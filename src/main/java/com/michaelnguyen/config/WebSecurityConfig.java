@@ -49,8 +49,7 @@ public class WebSecurityConfig {
 
 		http.authorizeHttpRequests(authorize -> {
 			authorize.requestMatchers(PUBLIC_ENDPOINT).permitAll().anyRequest().authenticated();
-		}).oauth2Login(oauth2 -> oauth2.loginPage("/login").defaultSuccessUrl("/api/auth/success", true)
-				.failureUrl("/login?error=true"));
+		});
 
 		http.oauth2ResourceServer(oauth2 -> oauth2
 				.jwt(jwtConfigurer -> jwtConfigurer.decoder(JwtDecoder())
