@@ -11,8 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.michaelnguyen.entity.User;
 
 public interface IUserRepository extends JpaRepository<User, Long> {
-	@Query("SELECT u FROM User u WHERE (  u.email = :email) AND ( u.provider = :provider) "
-			+ "AND ( u.providerId = :providerId)")
+	@Query("SELECT u FROM User u WHERE u.email = :email AND " +
+		       "(u.provider = :provider OR (:provider IS NULL AND u.provider IS NULL)) AND " +
+		       "(u.providerId = :providerId OR (:providerId IS NULL AND u.providerId IS NULL))")
 	Optional<User> findByOptions(@Param("email") String email, @Param("provider") String provider,
 			@Param("providerId") String providerId);
 

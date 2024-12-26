@@ -1,6 +1,8 @@
 package com.michaelnguyen.service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,23 +45,27 @@ public class UserService {
 	private UserProfileService userProfileService;
 
 	public UserResponse createUser(UserCreationRequest request) {
-		return null;
+		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), null, null);
 
-//		// Create a new user
-//		User newUser = new User();
-//		newUser.setEmail(request.getEmail());
-//		newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-//
-//		// Save the new user
-//		Optional<User> savedUser = iUserRepository.save(newUser);
-//		var roles = iRoleRepository.findAllById(Arrays.asList("USER"));
-//		savedUser.setRoles(new HashSet<>(roles));
-//		iUserMapper.toUserResponse(iUserRepository.save(savedUser));
-//
-//		savedUser = iUserRepository.findByEmail(request.getEmail());
-//		userProfileService.createUserProfile(savedUser.getId());
-//
-//		return iUserMapper.toUserResponse(savedUser);
+		if (user.isPresent())
+			throw new AppException(ErrorCode.EMAIL_EXIST);
+
+		// Create a new user
+		User newUser = new User();
+		newUser.setEmail(request.getEmail());
+		newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+
+		// Save the new user
+		var roles = iRoleRepository.findAllById(Arrays.asList("USER"));
+		newUser.setRoles(new HashSet<>(roles));
+
+		newUser = iUserRepository.save(newUser);
+
+		Optional<User> userSave = iUserRepository.findByOptions(request.getEmail(), null, null);
+
+		userProfileService.createUserProfile(userSave.get().getId());
+
+		return iUserMapper.toUserResponse(newUser);
 
 	}
 
@@ -87,6 +93,11 @@ public class UserService {
 		String provider = request.getProvider().isEmpty() ? null : request.getProvider();
 		String providerId = request.getProviderId().isEmpty() ? null : request.getProviderId();
 		
+		if (provider == null || providerId == null) {
+			var context = SecurityContextHolder.getContext().getAuthentication();
+			email = context.getName();
+		}
+		
 		Optional<User> user = iUserRepository.findByOptions(email, provider, providerId);
 
 		return iUserMapper.toUserResponse(user.get());
@@ -111,7 +122,7 @@ public class UserService {
 		User user = iUserRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
 
 		String sql = "";
-		sql += "update users u set ";
+		sql += "update users u set "; 
 
 		if (!request.getPassword().isEmpty()) {
 			sql += " u.password = '" + passwordEncoder.encode(request.getPassword()) + "'";

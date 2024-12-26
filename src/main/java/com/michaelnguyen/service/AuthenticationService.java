@@ -21,6 +21,8 @@ import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.response.AuthenticationResponse;
 import com.michaelnguyen.dto.response.IntrospectResponse;
 import com.michaelnguyen.entity.User;
+import com.michaelnguyen.error.AppException;
+import com.michaelnguyen.error.ErrorCode;
 import com.michaelnguyen.repository.IRoleRepository;
 import com.michaelnguyen.repository.IUserRepository;
 import com.nimbusds.jose.JOSEException;
@@ -46,7 +48,8 @@ public class AuthenticationService {
 
 	@Autowired
 	private UserProfileService userProfileService;
-
+	
+    @Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@NonFinal
@@ -70,16 +73,17 @@ public class AuthenticationService {
 
 	// Login with email and password
 	public AuthenticationResponse authenticateWithEmail(LoginRequest request) {
-		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), "", "");
+		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), null, null);
+		if (user.isPresent() == false)
+			throw new AppException(ErrorCode.UNAUTHENTICATED);
+		
+		boolean authentication = passwordEncoder.matches(request.getPassword(), user.get().getPassword());
+		if (!authentication)
+			throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-		if (user.isPresent() && passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
+		var token = generateToken(user.get());
 
-			var token = generateToken(user.get());
-
-			return AuthenticationResponse.builder().token(token).authenticated(true).build();
-
-		}
-		throw new RuntimeException("Invalid email or password");
+		return AuthenticationResponse.builder().token(token).authenticated(true).build();
 
 	}
 
@@ -110,6 +114,7 @@ public class AuthenticationService {
 		userProfileService.createUserProfile(user.get().getId());
 
 		var token = generateToken(user.get());
+
 		return AuthenticationResponse.builder().token(token).authenticated(true).build();
 
 	}
