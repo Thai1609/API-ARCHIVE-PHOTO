@@ -53,5 +53,9 @@ public class User {
 	@OneToMany
 	@JsonManagedReference
 	private Set<Gallery> galleries;
+	
+	@OneToMany
+	@JsonManagedReference
+	private Set<Tag> tags;
 
 }

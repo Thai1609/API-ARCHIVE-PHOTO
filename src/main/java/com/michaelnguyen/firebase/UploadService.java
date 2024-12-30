@@ -32,7 +32,7 @@ public class UploadService {
 		BlobId blobId = BlobId.of(STORAGE, fileName);
 		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("media").build();
 		InputStream inputStream = UploadService.class.getClassLoader()
-				.getResourceAsStream("data-images-12d9b-firebase-adminsdk-pghiq-3131317fc4.json");
+				.getResourceAsStream("data-images-12d9b-firebase-adminsdk-pghiq-19f991d79d.json");
 
 		Credentials credentials = GoogleCredentials.fromStream(inputStream);
 		Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
