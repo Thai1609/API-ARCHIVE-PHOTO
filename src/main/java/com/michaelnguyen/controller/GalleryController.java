@@ -36,14 +36,14 @@ public class GalleryController {
 		return galleryService.uploadImage(multipartFile, request);
 	}
 
-//	@GetMapping("/get-all")
-//	ApiResponse<?> getAllImage() {
-//		return ApiResponse.builder().result(galleryService.getAllImage()).build();
-//	}
-
 	@GetMapping("/{id}")
-	ApiResponse<?> getImageById(@PathVariable Long id) {
-		return ApiResponse.builder().result(galleryService.getImageById(id)).build();
+	ApiResponse<?> getGalleryById(@PathVariable Long id) {
+		return ApiResponse.builder().result(galleryService.getGalleryById(id)).build();
+	}
+
+	@GetMapping("/{id}/related")
+	ApiResponse<?> getRelatedGalleries(@PathVariable Long id, @RequestParam(value = "userId") Long userId) {
+		return ApiResponse.builder().result(galleryService.getRelatedGalleries(id, userId)).build();
 	}
 
 	@DeleteMapping("/{id}")
@@ -52,16 +52,14 @@ public class GalleryController {
 	}
 
 	@GetMapping("/get-all")
-	public Page<Gallery> getAllGalleries(@RequestParam(defaultValue = "0") int page,
+	public Page<GalleryResponse> getAllGalleries(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
-
 		return galleryService.getAllGalleries(page, size);
 	}
 
 	@GetMapping("/my-gallery")
-	public Page<Gallery> getAllGalleriesById(@RequestParam Long userId, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-
-		return galleryService.getAllGalleriesById(userId, page, size);
+	public Page<GalleryResponse> getAllGalleriesByUser(@RequestParam Long userId,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+		return galleryService.getAllGalleriesByUser(userId, page, size);
 	}
 }

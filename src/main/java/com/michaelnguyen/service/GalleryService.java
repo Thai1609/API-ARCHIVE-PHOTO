@@ -1,6 +1,9 @@
 package com.michaelnguyen.service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,6 +55,8 @@ public class GalleryService {
 			gallery.setId(iGalleryRepository.newIdGallery());
 			gallery.setNameImage(multipartFile.get(i).getOriginalFilename());
 			gallery.setUrlImage(uploadService.upload(multipartFile.get(i), "galleries/" + tag.getName() + "/"));
+			gallery.setDescription(request.getDescription());
+			gallery.setStatus(request.getStatus());
 			gallery.setTag(tag);
 			gallery.setUser(user);
 
@@ -61,28 +66,35 @@ public class GalleryService {
 		return iGalleryMapper.toGalleryResponse(gallery);
 	}
 
-	public List<GalleryResponse> getAllImage() {
-		return iGalleryRepository.findAll().stream().map(iGalleryMapper::toGalleryResponse).toList();
+	public Optional<Gallery> getGalleryById(Long id) {
+		return iGalleryRepository.findById(id);
 	}
 
-	public GalleryResponse getImageById(Long id) {
-		Gallery gallery = iGalleryRepository.findById(id).orElseThrow();
+	public List<GalleryResponse> getRelatedGalleries(Long id, Long userId) {
 
-		return iGalleryMapper.toGalleryResponse(gallery);
+		Optional<Gallery> optionalGallery = iGalleryRepository.findById(id);
+		if (optionalGallery.isEmpty())
+			return Collections.emptyList();
+		Gallery gallery = optionalGallery.get();
+
+		List<Gallery> relatedGalleries = iGalleryRepository.getGalleryByTag(gallery.getTag().getName(), userId);
+		relatedGalleries = relatedGalleries.stream().collect(Collectors.toList());
+
+		return relatedGalleries.stream().map(iGalleryMapper::toGalleryResponse).toList();
 	}
 
 	public void deleteImage(Long id) {
 		iGalleryRepository.deleteById(id);
 	}
 
-	public Page<Gallery> getAllGalleries(int page, int size) {
+	public Page<GalleryResponse> getAllGalleries(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		return iGalleryRepository.findAll(pageable);
+		return iGalleryRepository.findAllGalleries(pageable).map(iGalleryMapper::toGalleryResponse);
 	}
 
-	public Page<Gallery> getAllGalleriesById(Long userId, int page, int size) {
+	public Page<GalleryResponse> getAllGalleriesByUser(Long userId, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		return iGalleryRepository.findAllGalleryById(userId, pageable);
+		return iGalleryRepository.findAllGalleriesByUser(userId, pageable).map(iGalleryMapper::toGalleryResponse);
 	}
 
 }

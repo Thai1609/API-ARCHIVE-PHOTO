@@ -3,8 +3,8 @@ package com.michaelnguyen.entity;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,7 +36,6 @@ public class Tag {
 	@JsonBackReference
 	private User user;
 	
-	@OneToMany
-	@JsonManagedReference
-	private Set<Gallery> galleries;
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true) // Cascade remove galleries when tag is deleted
+ 	private Set<Gallery> galleries;
 }

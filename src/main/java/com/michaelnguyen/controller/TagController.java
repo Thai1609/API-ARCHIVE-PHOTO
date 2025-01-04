@@ -1,13 +1,12 @@
 package com.michaelnguyen.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.michaelnguyen.dto.request.TagRequest;
@@ -28,13 +27,13 @@ public class TagController {
 	}
 
 	@GetMapping("/get-all")
-	ApiResponse<?> getAllTags(@Param(value = "userId") Long userId) {
+	ApiResponse<?> getAllTags(@RequestParam(value = "userId") Long userId) {
 		return ApiResponse.builder().result(tagService.getAllTag(userId)).build();
 	}
 
-	@DeleteMapping("/{id}")
-	public void deleteTypeImage(@PathVariable Integer id) {
-		tagService.deleteTag(id);
+	@DeleteMapping("/delete")
+	public void deleteTypeImage(@RequestParam(value = "nameTag") String name) {
+		tagService.deleteTag(name);
 	}
 
 }

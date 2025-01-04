@@ -27,19 +27,19 @@ public class TagService {
 	public TagResponse createTag(TagRequest request) {
 		Tag type = iTagMapper.toTag(request);
 		User user = iUserRepository.findById(request.getUserId()).get();
-		
+
 		type.setUser(user);
 		type = iTagRepository.save(type);
 
 		return iTagMapper.toTagResponse(type);
 	}
 
-	public List<TagResponse> getAllTag(Long userId ) {
+	public List<TagResponse> getAllTag(Long userId) {
 		var tags = iTagRepository.findByOptions(userId, Sort.by(Sort.Order.asc("name")));
 		return tags.stream().map(iTagMapper::toTagResponse).toList();
 	}
 
-	public void deleteTag(int id) {
-		iTagRepository.deleteById(id);
+	public void deleteTag(String name) {
+		iTagRepository.deleteTagByName(name);
 	}
 }
