@@ -89,16 +89,9 @@ public class UserService {
 
 	@PostAuthorize("returnObject.email==authentication.name")
 	public UserResponse getInfo(UserInforRequest request) {
-		String email = request.getEmail();
-		String provider = request.getProvider().isEmpty() ? null : request.getProvider();
-		String providerId = request.getProviderId().isEmpty() ? null : request.getProviderId();
-		
-		if (provider == null || providerId == null) {
-			var context = SecurityContextHolder.getContext().getAuthentication();
-			email = context.getName();
-		}
-		
-		Optional<User> user = iUserRepository.findByOptions(email, provider, providerId);
+
+		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), request.getProvider(),
+				request.getProviderId());
 
 		return iUserMapper.toUserResponse(user.get());
 	}
@@ -122,7 +115,7 @@ public class UserService {
 		User user = iUserRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
 
 		String sql = "";
-		sql += "update users u set "; 
+		sql += "update users u set ";
 
 		if (!request.getPassword().isEmpty()) {
 			sql += " u.password = '" + passwordEncoder.encode(request.getPassword()) + "'";
