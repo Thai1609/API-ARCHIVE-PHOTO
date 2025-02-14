@@ -9,9 +9,9 @@ import lombok.Getter;
 public enum ErrorCode {
 
 	USER_NOT_EXIST(1000, "Email or Password is incorrect", HttpStatus.NOT_FOUND),
-	USER_EXIST(1001, "User is existed", HttpStatus.BAD_REQUEST),
-	USER_NOT_ACTIVATED(1005, "User not activated", HttpStatus.BAD_REQUEST),
-	EMAIL_EXIST(1003, "Email is existed", HttpStatus.BAD_REQUEST),
+ 	USER_NOT_ACTIVATED(1001, "User not activated", HttpStatus.BAD_REQUEST),
+	EMAIL_EXIST(1002, "Email is existed", HttpStatus.BAD_REQUEST),
+	EMAIL_NOT_EXIST(1003, "Email does not exist", HttpStatus.BAD_REQUEST),
  
 	UNAUTHENTICATED(1004, "Email not found or Password is invalid", HttpStatus.UNAUTHORIZED),
 	UNAUTHORIZED(1005, "You do not have permission", HttpStatus.FORBIDDEN),

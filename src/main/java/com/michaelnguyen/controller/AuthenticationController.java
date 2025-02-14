@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.michaelnguyen.dto.request.LoginWithProviderRequest;
+import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.response.ApiResponse;
@@ -19,9 +19,12 @@ import com.michaelnguyen.dto.response.AuthenticationResponse;
 import com.michaelnguyen.dto.response.UserResponse;
 import com.michaelnguyen.entity.User;
 import com.michaelnguyen.entity.VerificationToken;
+import com.michaelnguyen.error.AppException;
+import com.michaelnguyen.error.ErrorCode;
 import com.michaelnguyen.repository.IUserRepository;
 import com.michaelnguyen.repository.IVerificationTokenRepository;
 import com.michaelnguyen.service.AuthenticationService;
+import com.michaelnguyen.service.EmailService;
 import com.michaelnguyen.service.UserService;
 
 import jakarta.mail.MessagingException;
@@ -41,6 +44,8 @@ public class AuthenticationController {
 	private IVerificationTokenRepository iVerificationTokenRepository;
 	@Autowired
 	private IUserRepository iUserRepository;
+	@Autowired
+	private EmailService emailService;
 
 	@PostMapping("/login")
 	ApiResponse<AuthenticationResponse> authenticateWithEmail(@RequestBody LoginRequest request) {
@@ -50,7 +55,7 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/google")
-	ApiResponse<AuthenticationResponse> authenticateWithGoogle(@RequestBody LoginWithProviderRequest request) {
+	ApiResponse<AuthenticationResponse> authenticateWithGoogle(@RequestBody UserCreationRequest request) {
 		var result = authenticationService.authenticateWithGoogle(request);
 
 		return ApiResponse.<AuthenticationResponse>builder().result(result).build();
@@ -60,47 +65,30 @@ public class AuthenticationController {
 	UserResponse createUser(@RequestBody @Valid UserCreationRequest request) {
 		return userService.createUser(request);
 	}
+	@PostMapping("/delete-user")
+	UserResponse deleteUser(@RequestParam("userId") Long userId) {
+		return userService.delete(userId);
+	}
 
 	@PostMapping("/forgot")
 	String authForgotPassword(@RequestParam String email) throws MessagingException {
 
-		Optional<User> user = iUserRepository.findByOptions(email,null, null);
+		Optional<User> optionalUser = iUserRepository.findByOptions(email, null, null);
+		User user = optionalUser.orElse(null);
 
-//		if (user == null)
-//			throw new AppException(ErrorCode.EMAIL_NOT_EXIST);
-//
-//		// Tạo và gửi token xác thực
-//		String token = userService.createVerificationToken(user);
-//		// Gửi email xác thực chứa token
-//		String verificationUrl = "http://localhost:8080/api/auth/verify-forgot?token=" + token;
-//		emailService.sendSimpleEmail(user.getEmail(), "Reset Your Password", verificationUrl);
+		if (user == null)
+			throw new AppException(ErrorCode.EMAIL_NOT_EXIST);
 
-		return "Vui long kiem tra gmail!";
-
-	}
-
-	@PostMapping("/reset-password")
-	String authResetPassword(@RequestBody @Valid UserCreationRequest request) throws MessagingException {
-
-//		User user = iUserRepository.findByEmail(request.getEmail());
-//
-//		if (user == null)
-//			throw new AppException(ErrorCode.EMAIL_NOT_EXIST);
-//
-//		user.setPassword(passwordEncoder.encode(request.getPassword()));
-//
-//		iUserRepository.save(user);
-//
-//		// Tạo và gửi mail thong bao
-//		String token = userService.createVerificationToken(user);
-//		// Gửi email xác thực chứa token
-//		String verificationUrl = "http://localhost:8080/api/auth/verify-forgot?token=" + token;
-//		emailService.sendSimpleEmail(user.getEmail(), "Reset Your Password", verificationUrl);
+		// Tạo và gửi token xác thực
+		String token = userService.createVerificationToken(user);
+		// Gửi email xác thực chứa token
+		String verificationUrl = "http://localhost:8080/api/auth/verify-forgot?token=" + token;
+		emailService.sendSimpleEmail(user.getEmail(), "Reset Your Password", verificationUrl);
 
 		return "Vui long kiem tra gmail!";
 
 	}
-
+ 
 	@Transactional
 	public boolean verifyToken(String token) {
 		Optional<VerificationToken> verificationTokenOpt = iVerificationTokenRepository.findByToken(token);
@@ -136,7 +124,7 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/verify-forgot")
-	public String verifyForgotPassword(@RequestParam("token") String token) {
+	public boolean verifyForgotPassword(@RequestParam("token") String token) {
 		// Xác thực token
 		Optional<VerificationToken> verificationTokenOpt = iVerificationTokenRepository.findByToken(token);
 
@@ -144,11 +132,13 @@ public class AuthenticationController {
 			VerificationToken verificationToken = verificationTokenOpt.get();
 
 			if (verificationToken.isExpired()) {
-				return "<a href=\"http://localhost:3000/auth/login\">Quay lại trang chủ</a>";
+				
+//				return "<a href=\"http://localhost:3000/auth/login\">Quay lại trang chủ</a>";
+				return true;
 			}
 
 		}
-		return "<a href=\"http://localhost:3000/auth/login\">Quay lại trang chủ</a>";
+		return false;
 	}
 
 }

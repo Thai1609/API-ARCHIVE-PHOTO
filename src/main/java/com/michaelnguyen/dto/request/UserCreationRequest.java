@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 public class UserCreationRequest {
 	private String email;
 	private String password;
-	private String provider;
-	private String providerId;
+ 	private String provider;
+ 	private String providerId;
+ 	private String name; 
+    private String imageUrl;  
 }

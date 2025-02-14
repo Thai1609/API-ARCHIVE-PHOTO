@@ -1,5 +1,8 @@
 package com.michaelnguyen.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
@@ -36,6 +39,7 @@ public class Gallery {
 
 	@ManyToOne
 	@JsonBackReference
+	@OnDelete(action = OnDeleteAction.CASCADE)  // ✅ Xóa tag -> tự động xóa gallery
 	private Tag tag;
 
 	@ManyToOne

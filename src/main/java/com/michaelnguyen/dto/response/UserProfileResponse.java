@@ -13,9 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserProfileResponse {
 
-	private String firstName;
-
-	private String lastName;
+	private String fullName;
 
 	private String address;
 

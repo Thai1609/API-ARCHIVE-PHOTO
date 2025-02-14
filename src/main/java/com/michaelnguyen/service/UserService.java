@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +62,7 @@ public class UserService {
 
 		Optional<User> userSave = iUserRepository.findByOptions(request.getEmail(), null, null);
 
-		userProfileService.createUserProfile(userSave.get().getId());
+		userProfileService.createUserProfile(userSave.get().getId(), request);
 
 		return iUserMapper.toUserResponse(newUser);
 
@@ -106,9 +105,11 @@ public class UserService {
 		return iUserRepository.findAll().stream().map(iUserMapper::toUserResponse).toList();
 	}
 
-	public void delete(Long id) {
+	public UserResponse delete(Long id) {
 		User user = iUserRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
 		iUserRepository.delete(user);
+		return iUserMapper.toUserResponse(user);
+
 	}
 
 	public UserResponse updateUserByAdmin(Long id, UserUpdateRequest request) {

@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.michaelnguyen.dto.request.LoginWithProviderRequest;
+import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.request.IntrospectRequest;
 import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.response.AuthenticationResponse;
@@ -88,7 +88,7 @@ public class AuthenticationService {
 	}
 
 	// Login with Google
-	public AuthenticationResponse authenticateWithGoogle(LoginWithProviderRequest request) {
+	public AuthenticationResponse authenticateWithGoogle(UserCreationRequest request) {
 		Optional<User> userCheck = iUserRepository.findByOptions(request.getEmail(), request.getProvider(),
 				request.getProviderId());
 
@@ -111,7 +111,7 @@ public class AuthenticationService {
 		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), request.getProvider(),
 				request.getProviderId());
 
-		userProfileService.createUserProfile(user.get().getId());
+		userProfileService.createUserProfile(user.get().getId(), request);
 
 		var token = generateToken(user.get());
 

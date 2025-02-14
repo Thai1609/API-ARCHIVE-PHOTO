@@ -1,6 +1,7 @@
 package com.michaelnguyen.entity;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,4 +44,6 @@ public class VerificationToken {
 	public boolean isExpired() {
 		return LocalDateTime.now().isAfter(this.expiryDate);
 	}
+
+ 
 }
