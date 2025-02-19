@@ -1,5 +1,7 @@
 package com.michaelnguyen.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +27,7 @@ public class ProductImage {
 
 	@ManyToOne
 	@JoinColumn(name = "product_id", nullable = false)
+	@JsonBackReference
 	private Product product;
 
  	private String imageUrl;
