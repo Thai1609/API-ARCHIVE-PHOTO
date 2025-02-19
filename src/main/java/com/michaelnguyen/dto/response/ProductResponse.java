@@ -1,9 +1,5 @@
 package com.michaelnguyen.dto.response;
 
-import java.util.Set;
-
-import com.michaelnguyen.entity.Gallery;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +15,5 @@ public class ProductResponse {
 	private String name;
 	private double price;
 	private int quantity;
-	private Set<Gallery> galleries;
-
+ 
 }

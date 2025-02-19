@@ -2,6 +2,8 @@ package com.michaelnguyen.entity;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -24,7 +26,8 @@ public class Role {
 	private String description;
 
 	@ManyToMany
-	private Set<Permission> permissions;          
+	@JsonManagedReference
+	private Set<Permission> permissions;
 
 //	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //	@JoinTable(name = "roles_permissions", joinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"), inverseJoinColumns = @JoinColumn(name = "permission_name", referencedColumnName = "name"))

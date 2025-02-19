@@ -1,48 +1,47 @@
 package com.michaelnguyen.entity;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "product_reviews")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Builder
-@Table(name = "gallery")
-public class Gallery {
+public class ProductReview {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String nameImage;
-
-	private String urlImage;
-
-	private String status;
-	
-	private String description;
-
 	@ManyToOne
 	@JsonBackReference
-	@OnDelete(action = OnDeleteAction.CASCADE)  // ✅ Xóa tag -> tự động xóa gallery
-	private Tag tag;
+	@JoinColumn(name = "product_id", nullable = false)
+	private Product product;
 
-	@ManyToOne
-	@JsonBackReference
-	private User user;
+	@Column(nullable = false)
+	private Long userId;
+
+	@Column(nullable = false)
+	private int rating;
+
+	@Column(columnDefinition = "TEXT")
+	private String comment;
+
+	@Column(nullable = false)
+	private LocalDateTime createdAt = LocalDateTime.now();
 }

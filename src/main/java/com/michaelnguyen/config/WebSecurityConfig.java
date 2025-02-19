@@ -23,7 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-	private String[] PUBLIC_ENDPOINT = { "/api/auth/**" };
+	private String[] PUBLIC_ENDPOINT = { "/api/**" };
 
 //	private String[] PUBLIC_ENDPOINT = { "/api/auth/**", "/api/permissions/**", "/api/roles/**", "/api/product/**",
 //			"/api/gallery/**" };
