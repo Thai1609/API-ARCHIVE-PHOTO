@@ -1,14 +1,13 @@
 package com.michaelnguyen.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.michaelnguyen.dto.request.ProductSpecification;
 import com.michaelnguyen.entity.Product;
 import com.michaelnguyen.repository.IProductRepository;
 
@@ -17,10 +16,11 @@ public class ProductService {
 	@Autowired
 	private IProductRepository productRepository;
 
-	// Lấy danh sách tất cả sản phẩm
-	public Page<Product> getProducts(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return productRepository.findAll(pageable);
+	public Page<Product> getProducts(String name, Long categoryId, Long parentId, Long brandId, Double minPrice,
+			Double maxPrice, Pageable pageable) {
+
+		return productRepository.findAll(
+				ProductSpecification.filterProducts(name, categoryId, parentId, brandId, minPrice, maxPrice), pageable);
 	}
 
 	// Lấy sản phẩm theo ID

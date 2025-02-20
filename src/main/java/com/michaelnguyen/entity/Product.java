@@ -78,6 +78,6 @@ public class Product {
 	private Set<ProductTag> tags;
 }
 
-enum ProductStatus {
+  enum ProductStatus {
 	ACTIVE, INACTIVE
 }

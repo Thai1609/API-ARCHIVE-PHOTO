@@ -10,6 +10,4 @@ public interface ICategoryRepository extends JpaRepository<Category, Long> {
 
 	List<Category> findByParentCategoryId(Long parentId);
 
-	List<Category> findByParentCategoryIsNull();
-
 }

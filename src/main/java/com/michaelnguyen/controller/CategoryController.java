@@ -51,11 +51,6 @@ public class CategoryController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/root")
-	public ResponseEntity<List<Category>> getRootCategories() {
-		return ResponseEntity.ok(categoryService.getRootCategories());
-	}
-
 	@GetMapping("/{parentId}/subcategories")
 	public ResponseEntity<List<Category>> getSubCategories(@PathVariable Long parentId) {
 		return ResponseEntity.ok(categoryService.getSubCategories(parentId));

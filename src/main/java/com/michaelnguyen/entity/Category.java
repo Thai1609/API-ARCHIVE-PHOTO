@@ -29,19 +29,19 @@ import lombok.Setter;
 @Builder
 @Table(name = "categories")
 public class Category {
-	 @Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-	    @Column(nullable = false, unique = true)
-	    private String name;
+	@Column(nullable = false, unique = true)
+	private String name;
 
-	    @ManyToOne
-	    @JoinColumn(name = "parent_id")
- 	    @JsonIgnoreProperties("subCategories")
-	    private Category parentCategory;
+	@ManyToOne
+	@JoinColumn(name = "parent_id")
+	@JsonIgnoreProperties("subCategories")
+	private Category parentCategory;
 
-	    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-	    @JsonManagedReference
-	    private Set<Product> products;
+	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
+	private Set<Product> products;
 }
