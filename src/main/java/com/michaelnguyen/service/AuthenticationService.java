@@ -87,8 +87,8 @@ public class AuthenticationService {
 
 	}
 
-	// Login with Google
-	public AuthenticationResponse authenticateWithGoogle(UserCreationRequest request) {
+	// Login with Provider
+	public AuthenticationResponse authenticateWithProvider(UserCreationRequest request) {
 		Optional<User> userCheck = iUserRepository.findByOptions(request.getEmail(), request.getProvider(),
 				request.getProviderId());
 

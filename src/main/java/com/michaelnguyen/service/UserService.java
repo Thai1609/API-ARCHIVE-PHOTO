@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -89,8 +90,8 @@ public class UserService {
 	@PostAuthorize("returnObject.email==authentication.name")
 	public UserResponse getInfo(UserInforRequest request) {
 
-		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), request.getProvider(),
-				request.getProviderId());
+		Optional<User> user = iUserRepository.findByOptions(request.getEmail(),
+				request.getProvider() == null ? null : request.getProvider().toUpperCase(), request.getProviderId());
 
 		return iUserMapper.toUserResponse(user.get());
 	}

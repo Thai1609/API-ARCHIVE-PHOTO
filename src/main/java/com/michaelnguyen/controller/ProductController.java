@@ -1,11 +1,13 @@
 package com.michaelnguyen.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +17,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.michaelnguyen.dto.request.GalleryRequest;
+import com.michaelnguyen.dto.request.ProductRequest;
+import com.michaelnguyen.dto.response.GalleryResponse;
 import com.michaelnguyen.entity.Product;
 import com.michaelnguyen.service.ProductService;
 
@@ -46,10 +53,17 @@ public class ProductController {
 	}
 
 	// Thêm sản phẩm mới
-	@PostMapping
-	public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-		Product savedProduct = productService.addProduct(product);
-		return ResponseEntity.ok(savedProduct);
+//	@PostMapping
+//	public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+//		Product savedProduct = productService.addProduct(product);
+//		return ResponseEntity.ok(savedProduct);
+//	}
+	@PostMapping(value = "/upload-image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE })
+	public GalleryResponse createProduct(@RequestPart("file") List<MultipartFile> multipartFile,
+			@RequestPart ProductRequest request) {
+
+		return galleryService.uploadImage(multipartFile, request);
 	}
 
 	// Cập nhật sản phẩm theo ID

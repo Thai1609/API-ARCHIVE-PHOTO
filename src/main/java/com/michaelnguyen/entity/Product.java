@@ -50,6 +50,10 @@ public class Product {
 
 	@Enumerated(EnumType.STRING)
 	private ProductStatus status = ProductStatus.ACTIVE;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
 	@ManyToOne
 	@JoinColumn(name = "category_id")
@@ -78,6 +82,6 @@ public class Product {
 	private Set<ProductTag> tags;
 }
 
-  enum ProductStatus {
+enum ProductStatus {
 	ACTIVE, INACTIVE
 }

@@ -54,13 +54,13 @@ public class AuthenticationController {
 		return ApiResponse.<AuthenticationResponse>builder().result(result).build();
 	}
 
-	@PostMapping("/google")
-	ApiResponse<AuthenticationResponse> authenticateWithGoogle(@RequestBody UserCreationRequest request) {
-		var result = authenticationService.authenticateWithGoogle(request);
+	@PostMapping("/login-with-provider")
+	ApiResponse<AuthenticationResponse> authenticateWithProvider(@RequestBody UserCreationRequest request) {
+		var result = authenticationService.authenticateWithProvider(request);
 
 		return ApiResponse.<AuthenticationResponse>builder().result(result).build();
 	}
-
+ 
 	@PostMapping("/signup")
 	UserResponse createUser(@RequestBody @Valid UserCreationRequest request) {
 		return userService.createUser(request);
