@@ -1,5 +1,7 @@
 package com.michaelnguyen.dto.request;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,14 +11,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductRequest {
-	private Long userId;
-	private Long categoryId;
-	private String nameProduct;
+public class ProductUploadRequest {
+	private Long id;
+	private String name;
 	private String description;
-	private double price;
-	private String status;
+	private BigDecimal price;
+	private BigDecimal discount;
 	private int stock;
+
+	private Long categoryId;
 	private Long brandId;
+	private Long userId;
 
 }

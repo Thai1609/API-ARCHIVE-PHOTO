@@ -33,7 +33,8 @@ public class UserProfile {
 
 	@Size(min = 3, message = "")
 	private String fullName;
-
+	
+	@Column(length = 1000)
 	private String avatarUrl;
 
 	private String description;

@@ -21,9 +21,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.michaelnguyen.dto.request.GalleryRequest;
-import com.michaelnguyen.dto.request.ProductRequest;
-import com.michaelnguyen.dto.response.GalleryResponse;
+import com.michaelnguyen.dto.request.ProductUploadRequest;
+import com.michaelnguyen.dto.response.ProductResponse;
 import com.michaelnguyen.entity.Product;
 import com.michaelnguyen.service.ProductService;
 
@@ -58,12 +57,12 @@ public class ProductController {
 //		Product savedProduct = productService.addProduct(product);
 //		return ResponseEntity.ok(savedProduct);
 //	}
-	@PostMapping(value = "/upload-image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = {
+	@PostMapping(value = "/upload-product", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
-	public GalleryResponse createProduct(@RequestPart("file") List<MultipartFile> multipartFile,
-			@RequestPart ProductRequest request) {
+	public ProductResponse createProduct(@RequestPart("file") List<MultipartFile> multipartFile,
+			@RequestPart ProductUploadRequest request) {
 
-		return galleryService.uploadImage(multipartFile, request);
+		return productService.uploadProduct(multipartFile, request);
 	}
 
 	// Cập nhật sản phẩm theo ID

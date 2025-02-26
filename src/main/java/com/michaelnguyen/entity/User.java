@@ -50,8 +50,4 @@ public class User {
 	@ManyToMany
 	private Set<Role> roles;
 
-	@OneToMany
-	@JsonManagedReference
-	private Set<Tag> tags;
-
 }

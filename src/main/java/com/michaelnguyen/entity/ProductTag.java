@@ -2,7 +2,6 @@ package com.michaelnguyen.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +30,7 @@ public class ProductTag {
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
 
-	@Column(nullable = false)
-	private String tag;
+	@ManyToOne
+	@JoinColumn(name = "tag_id", nullable = false)
+	private Tag tag;
 }
