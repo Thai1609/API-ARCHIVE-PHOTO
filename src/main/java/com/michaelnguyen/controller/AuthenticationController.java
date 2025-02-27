@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.michaelnguyen.dto.request.UserCreationRequest;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.response.ApiResponse;
@@ -55,16 +56,17 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/login-with-provider")
-	ApiResponse<AuthenticationResponse> authenticateWithProvider(@RequestBody UserCreationRequest request) {
+	ApiResponse<AuthenticationResponse> authenticateWithProvider(@RequestBody UserCreationRequest request) throws FirebaseAuthException {
 		var result = authenticationService.authenticateWithProvider(request);
 
 		return ApiResponse.<AuthenticationResponse>builder().result(result).build();
 	}
  
 	@PostMapping("/signup")
-	UserResponse createUser(@RequestBody @Valid UserCreationRequest request) {
+	UserResponse createUser(@RequestBody @Valid UserCreationRequest request) throws FirebaseAuthException {
 		return userService.createUser(request);
 	}
+	
 	@PostMapping("/delete-user")
 	UserResponse deleteUser(@RequestParam("userId") Long userId) {
 		return userService.delete(userId);

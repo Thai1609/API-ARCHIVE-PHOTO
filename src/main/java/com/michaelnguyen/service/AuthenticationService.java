@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.StringJoiner;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.michaelnguyen.dto.request.UserCreationRequest;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.michaelnguyen.dto.request.IntrospectRequest;
 import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.response.AuthenticationResponse;
@@ -88,7 +90,8 @@ public class AuthenticationService {
 	}
 
 	// Login with Provider
-	public AuthenticationResponse authenticateWithProvider(UserCreationRequest request) {
+	public AuthenticationResponse authenticateWithProvider(UserCreationRequest request) throws FirebaseAuthException {
+	
 		Optional<User> userCheck = iUserRepository.findByOptions(request.getEmail(), request.getProvider(),
 				request.getProviderId());
 
@@ -116,7 +119,7 @@ public class AuthenticationService {
 		var token = generateToken(user.get());
 
 		return AuthenticationResponse.builder().token(token).authenticated(true).build();
-
+		
 	}
 
 //	public AuthenticationResponse refreshToken(AuthenticationRequest request) {

@@ -7,6 +7,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.UserRecord;
+import com.google.firebase.auth.UserRecord.CreateRequest;
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.request.UserProfileUpdateRequest;
 import com.michaelnguyen.dto.response.UserProfileResponse;
@@ -40,11 +44,16 @@ public class UserProfileService {
 	}
 
 //	@PostAuthorize("returnObject.email==authentication.name")
-	public UserProfileResponse createUserProfile(Long id, UserCreationRequest request) {
+	public UserProfileResponse createUserProfile(Long id, UserCreationRequest request) throws FirebaseAuthException {
+		CreateRequest rqFirebase = new CreateRequest().setEmail(request.getEmail()).setPassword(request.getPassword())
+				.setDisplayName(request.getName());
+
+		UserRecord userRecord = FirebaseAuth.getInstance().createUser(rqFirebase);
 
 		UserProfile userProfile = new UserProfile();
 		userProfile.setFullName(request.getName());
 		userProfile.setAvatarUrl(request.getImageUrl());
+		userProfile.setUid(userRecord.getUid());
 		userProfile.setUser(iUserRepository.findById(id).orElseThrow());
 
 		return iUserProfileMapper.toUserProfileResponse(iUserProfileRepository.save(userProfile));

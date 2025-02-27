@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.request.UserInforRequest;
 import com.michaelnguyen.dto.request.UserUpdateRequest;
@@ -44,7 +45,7 @@ public class UserService {
 	@Autowired
 	private UserProfileService userProfileService;
 
-	public UserResponse createUser(UserCreationRequest request) {
+	public UserResponse createUser(UserCreationRequest request) throws FirebaseAuthException {
 		Optional<User> user = iUserRepository.findByOptions(request.getEmail(), null, null);
 
 		if (user.isPresent())
