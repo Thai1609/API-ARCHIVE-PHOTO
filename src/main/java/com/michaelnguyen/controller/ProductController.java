@@ -24,13 +24,15 @@ import org.springframework.web.multipart.MultipartFile;
 import com.michaelnguyen.dto.request.ProductUploadRequest;
 import com.michaelnguyen.dto.response.ProductResponse;
 import com.michaelnguyen.entity.Product;
+import com.michaelnguyen.mapper.IProductMapper;
 import com.michaelnguyen.service.ProductService;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
 	@Autowired
-	private ProductService productService;
+	private ProductService productService;@Autowired
+	private IProductMapper iProductMapper;
 
 	// Lấy danh sách tất cả sản phẩm
 	@GetMapping
@@ -46,10 +48,10 @@ public class ProductController {
 
 	// Lấy sản phẩm theo ID
 	@GetMapping("/{id}")
-	public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+	public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
 		Optional<Product> product = productService.getProductById(id);
-		return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-	}
+        return product.map(p -> ResponseEntity.ok(iProductMapper.toProductResponse(p)))
+                .orElseGet(() -> ResponseEntity.notFound().build());	}
 
 	// Thêm sản phẩm mới
 //	@PostMapping
