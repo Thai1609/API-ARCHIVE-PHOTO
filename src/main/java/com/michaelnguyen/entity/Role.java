@@ -1,35 +1,29 @@
 package com.michaelnguyen.entity;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Builder
+@Entity
 public class Role {
-	@Id
-	private String name;
+    @Id
+    private String name;
 
-	private String description;
+    private String description;
 
-	@ManyToMany
-	@JsonManagedReference
-	private Set<Permission> permissions;
+    @ElementCollection(fetch = FetchType.EAGER) // Đánh dấu là tập hợp
+    @CollectionTable(
+            name = "role_permissions", // Tên bảng phụ để ánh xạ permissions
+            joinColumns = @JoinColumn(name = "role_name") // Liên kết với Role qua khóa "role_name"
+    )
+    @Enumerated(EnumType.STRING) // Lưu enum dưới dạng chuỗi
+    private Set<Permission> permissions; // Danh sách quyền (enum)
 
-//	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//	@JoinTable(name = "roles_permissions", joinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"), inverseJoinColumns = @JoinColumn(name = "permission_name", referencedColumnName = "name"))
-//	private Set<Permission> permissions;
+
 }

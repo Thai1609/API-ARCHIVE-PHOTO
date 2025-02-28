@@ -1,19 +1,6 @@
 package com.michaelnguyen.controller;
 
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.michaelnguyen.dto.request.LoginRequest;
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.response.ApiResponse;
 import com.michaelnguyen.dto.response.AuthenticationResponse;
@@ -27,120 +14,122 @@ import com.michaelnguyen.repository.IVerificationTokenRepository;
 import com.michaelnguyen.service.AuthenticationService;
 import com.michaelnguyen.service.EmailService;
 import com.michaelnguyen.service.UserService;
-
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
-	@Autowired
-	AuthenticationService authenticationService;
 
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private IVerificationTokenRepository iVerificationTokenRepository;
-	@Autowired
-	private IUserRepository iUserRepository;
-	@Autowired
-	private EmailService emailService;
+    private final AuthenticationService authenticationService;
 
-	@PostMapping("/login")
-	ApiResponse<AuthenticationResponse> authenticateWithEmail(@RequestBody LoginRequest request) {
-		var result = authenticationService.authenticateWithEmail(request);
+    private final UserService userService;
 
-		return ApiResponse.<AuthenticationResponse>builder().result(result).build();
-	}
+    private final IVerificationTokenRepository iVerificationTokenRepository;
 
-	@PostMapping("/login-with-provider")
-	ApiResponse<AuthenticationResponse> authenticateWithProvider(@RequestBody UserCreationRequest request) throws FirebaseAuthException {
-		var result = authenticationService.authenticateWithProvider(request);
+    private final IUserRepository iUserRepository;
 
-		return ApiResponse.<AuthenticationResponse>builder().result(result).build();
-	}
- 
-	@PostMapping("/signup")
-	UserResponse createUser(@RequestBody @Valid UserCreationRequest request) throws FirebaseAuthException {
-		return userService.createUser(request);
-	}
-	
-	@PostMapping("/delete-user")
-	UserResponse deleteUser(@RequestParam("userId") Long userId) {
-		return userService.delete(userId);
-	}
+    private final EmailService emailService;
 
-	@PostMapping("/forgot")
-	String authForgotPassword(@RequestParam String email) throws MessagingException {
+    @PostMapping("/login")
+    ApiResponse<AuthenticationResponse> authenticateWithEmail(@RequestBody UserCreationRequest request) {
+        var result = authenticationService.authenticateWithEmail(request);
 
-		Optional<User> optionalUser = iUserRepository.findByOptions(email, null, null);
-		User user = optionalUser.orElse(null);
+        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
+    }
 
-		if (user == null)
-			throw new AppException(ErrorCode.EMAIL_NOT_EXIST);
+    @PostMapping("/login-with-provider")
+    ApiResponse<AuthenticationResponse> authenticateWithProvider(@RequestBody UserCreationRequest request) throws FirebaseAuthException {
+        var result = authenticationService.authenticateWithProvider(request);
 
-		// Tạo và gửi token xác thực
-		String token = userService.createVerificationToken(user);
-		// Gửi email xác thực chứa token
-		String verificationUrl = "http://localhost:8080/api/auth/verify-forgot?token=" + token;
-		emailService.sendSimpleEmail(user.getEmail(), "Reset Your Password", verificationUrl);
+        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
+    }
 
-		return "Vui long kiem tra gmail!";
+    @PostMapping("/signup")
+    UserResponse createUser(@RequestBody @Valid UserCreationRequest request) throws FirebaseAuthException {
+        return userService.createUser(request);
+    }
 
-	}
- 
-	@Transactional
-	public boolean verifyToken(String token) {
-		Optional<VerificationToken> verificationTokenOpt = iVerificationTokenRepository.findByToken(token);
-		if (verificationTokenOpt.isPresent()) {
-			VerificationToken verificationToken = verificationTokenOpt.get();
+    @PostMapping("/delete-user")
+    UserResponse deleteUser(@RequestParam("userId") Long userId) {
+        return userService.delete(userId);
+    }
 
-			if (verificationToken.isExpired()) {
-				return false; // Token đã hết hạn
-			}
-			// Kích hoạt tài khoản người dùng
-			User user = verificationToken.getUser();
+    @PostMapping("/forgot")
+    String authForgotPassword(@RequestParam String email) throws MessagingException {
 
-			iUserRepository.updateEnabled(user.getId());
+        Optional<User> optionalUser = iUserRepository.findByOptions(email, null, null);
+        User user = optionalUser.orElse(null);
 
-			// Xóa token sau khi sử dụng
-			iVerificationTokenRepository.delete(verificationToken);
+        if (user == null)
+            throw new AppException(ErrorCode.EMAIL_NOT_EXIST);
 
-			return true;
-		} else {
-			return false; // Token không tồn tại
-		}
-	}
+        // Tạo và gửi token xác thực
+        String token = userService.createVerificationToken(user);
+        // Gửi email xác thực chứa token
+        String verificationUrl = "http://localhost:8080/api/auth/verify-forgot?token=" + token;
+        emailService.sendSimpleEmail(user.getEmail(), "Reset Your Password", verificationUrl);
 
-	@GetMapping("/verify-register")
-	public String verifyCreateAccount(@RequestParam("token") String token) {
-		// Xác thực token và kích hoạt tài khoản người dùng
-		boolean isValid = verifyToken(token);
-		if (isValid) {
-			return "Tài khoản của bạn đã được xác thực thành công! <a href=\"http://localhost:3000/auth/login\">Quay lại trang chủ</a>";
-		} else {
-			return "Token xác thực không hợp lệ hoặc đã hết hạn. <a href=\"http://localhost:3000/auth/login\">Quay lại trang chủ</a>";
-		}
-	}
+        return "Vui long kiem tra gmail!";
 
-	@GetMapping("/verify-forgot")
-	public boolean verifyForgotPassword(@RequestParam("token") String token) {
-		// Xác thực token
-		Optional<VerificationToken> verificationTokenOpt = iVerificationTokenRepository.findByToken(token);
+    }
 
-		if (verificationTokenOpt.isPresent()) {
-			VerificationToken verificationToken = verificationTokenOpt.get();
+    @Transactional
+    public boolean verifyToken(String token) {
+        Optional<VerificationToken> verificationTokenOpt = iVerificationTokenRepository.findByToken(token);
+        if (verificationTokenOpt.isPresent()) {
+            VerificationToken verificationToken = verificationTokenOpt.get();
 
-			if (verificationToken.isExpired()) {
-				
+            if (verificationToken.isExpired()) {
+                return false; // Token đã hết hạn
+            }
+            // Kích hoạt tài khoản người dùng
+            User user = verificationToken.getUser();
+
+            iUserRepository.updateEnabled(user.getId());
+
+            // Xóa token sau khi sử dụng
+            iVerificationTokenRepository.delete(verificationToken);
+
+            return true;
+        } else {
+            return false; // Token không tồn tại
+        }
+    }
+
+    @GetMapping("/verify-register")
+    public String verifyCreateAccount(@RequestParam("token") String token) {
+        // Xác thực token và kích hoạt tài khoản người dùng
+        boolean isValid = verifyToken(token);
+        if (isValid) {
+            return "Tài khoản của bạn đã được xác thực thành công! <a href=\"http://localhost:3000/auth/login\">Quay lại trang chủ</a>";
+        } else {
+            return "Token xác thực không hợp lệ hoặc đã hết hạn. <a href=\"http://localhost:3000/auth/login\">Quay lại trang chủ</a>";
+        }
+    }
+
+    @GetMapping("/verify-forgot")
+    public boolean verifyForgotPassword(@RequestParam("token") String token) {
+        // Xác thực token
+        Optional<VerificationToken> verificationTokenOpt = iVerificationTokenRepository.findByToken(token);
+
+        if (verificationTokenOpt.isPresent()) {
+            VerificationToken verificationToken = verificationTokenOpt.get();
+
+            if (verificationToken.isExpired()) {
+
 //				return "<a href=\"http://localhost:3000/auth/login\">Quay lại trang chủ</a>";
-				return true;
-			}
+                return true;
+            }
 
-		}
-		return false;
-	}
+        }
+        return false;
+    }
 
 }

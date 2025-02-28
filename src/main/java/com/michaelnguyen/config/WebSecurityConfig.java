@@ -1,7 +1,5 @@
 package com.michaelnguyen.config;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,57 +16,59 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import javax.crypto.spec.SecretKeySpec;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-	private String[] PUBLIC_ENDPOINT = { "/api/**" };
+    private String[] PUBLIC_ENDPOINT = {"/api/**"};
 
 //	private String[] PUBLIC_ENDPOINT = { "/api/auth/**", "/api/permissions/**", "/api/roles/**", "/api/product/**",
 //			"/api/gallery/**" };
 
-	@Value("${jwt.signerKey}")
-	private String SIGNER_KEY;
+    @Value("${jwt.signerKey}")
+    private String SIGNER_KEY;
 
-	@Bean
-	static PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(10);
-	}
+    @Bean
+    static PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
 
-	@Bean
-	JwtDecoder JwtDecoder() {
-		SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
-		return NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS512).build();
+    @Bean
+    JwtDecoder JwtDecoder() {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
+        return NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS512).build();
 
-	}
+    }
 
-	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource)
-			throws Exception {
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource)
+            throws Exception {
 
-		http.authorizeHttpRequests(authorize -> {
-			authorize.requestMatchers(PUBLIC_ENDPOINT).permitAll().anyRequest().authenticated();
-		});
+        http.authorizeHttpRequests(authorize -> {
+            authorize.requestMatchers(PUBLIC_ENDPOINT).permitAll().anyRequest().authenticated();
+        });
 
-		http.oauth2ResourceServer(oauth2 -> oauth2
-				.jwt(jwtConfigurer -> jwtConfigurer.decoder(JwtDecoder())
-						.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-				.authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
+        http.oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwtConfigurer -> jwtConfigurer.decoder(JwtDecoder())
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
-		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource));
-		return http.build();
-	}
+        http.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource));
+        return http.build();
+    }
 
-	private JwtAuthenticationConverter jwtAuthenticationConverter() {
-		JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+    private JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
-		jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
 
-		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 
-		return jwtAuthenticationConverter;
-	}
+        return jwtAuthenticationConverter;
+    }
 
 }

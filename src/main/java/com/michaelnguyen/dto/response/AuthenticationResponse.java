@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class AuthenticationResponse {
-	String token;
-	private boolean authenticated;
+    String token;
+    private boolean authenticated;
 
 }

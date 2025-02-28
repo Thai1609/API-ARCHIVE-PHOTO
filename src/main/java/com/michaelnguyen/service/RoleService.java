@@ -1,47 +1,52 @@
 package com.michaelnguyen.service;
 
-import java.util.HashSet;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.michaelnguyen.dto.request.RoleCreateRequest;
+import com.michaelnguyen.entity.Permission;
+import com.michaelnguyen.entity.Role;
+import com.michaelnguyen.repository.IRoleRepository;
 import org.springframework.stereotype.Service;
 
-import com.michaelnguyen.dto.request.RoleRequest;
-import com.michaelnguyen.dto.response.RoleResponse;
-import com.michaelnguyen.mapper.IRoleMapper;
-import com.michaelnguyen.repository.IPermissionRepository;
-import com.michaelnguyen.repository.IRoleRepository;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RoleService {
+    private final IRoleRepository iRoleRepository;
 
-	@Autowired
-	IRoleRepository iRoleRepository;
-	@Autowired
-	IRoleMapper iRoleMapper;
 
-	@Autowired
-	IPermissionRepository iPermissionRepository;
+    public RoleService(IRoleRepository iRoleRepository) {
+        this.iRoleRepository = iRoleRepository;
+    }
 
-	public RoleResponse create(RoleRequest request) {
+    public Role createRole(RoleCreateRequest request) {
+        // Kiểm tra Role đã tồn tại chưa
+        if (iRoleRepository.findById(request.getName()).isPresent()) {
+            throw new IllegalArgumentException("Role " + request.getName() + " đã tồn tại.");
+        }
 
-		var role = iRoleMapper.toRole(request);
+        // Convert danh sách permissions từ String -> Enum Permission
+        Set<Permission> permissions = request.getPermissions().stream().map(permissionName -> {
+            try {
+                return Permission.valueOf(String.valueOf(permissionName));
+            } catch (IllegalArgumentException ex) {
+                throw new IllegalArgumentException("Permission không tồn tại: " + permissionName);
+            }
+        }).collect(Collectors.toSet());
 
-		var permissions = iPermissionRepository.findAllById(request.getPermissions());
+        // Tạo Role mới
+        Role role = Role.builder().name(request.getName()).description(request.getDescription()).permissions(permissions).build();
 
-		role.setPermissions(new HashSet<>(permissions));
+        // Lưu vào database
+        return iRoleRepository.save(role);
+    }
 
-		role = iRoleRepository.save(role);
 
-		return iRoleMapper.toRoleResponse(role);
+    public List<Role> getAllRole() {
+        return iRoleRepository.findAll();
+    }
 
-	}
-
-	public List<RoleResponse> getAllRole() {
-		return iRoleRepository.findAll().stream().map(iRoleMapper::toRoleResponse).toList();
-	}
-
-	public void deleteRole(String name) {
-		iRoleRepository.deleteById(name);
-	}
+    public void deleteRole(String name) {
+        iRoleRepository.deleteById(name);
+    }
 }

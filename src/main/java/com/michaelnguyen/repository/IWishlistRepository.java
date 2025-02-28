@@ -1,14 +1,13 @@
 package com.michaelnguyen.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.michaelnguyen.entity.User;
 import com.michaelnguyen.entity.Wishlist;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface IWishlistRepository extends JpaRepository<Wishlist, Long> {
-	List<Wishlist> findByUser(User user);
+    List<Wishlist> findByUser(User user);
 
-	void deleteByUserAndGalleryId(User user, String galleryId);
+    void deleteByUserAndGalleryId(User user, String galleryId);
 }

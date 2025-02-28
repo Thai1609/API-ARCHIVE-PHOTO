@@ -1,65 +1,59 @@
 package com.michaelnguyen.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.michaelnguyen.dto.request.UserUpdateRequest;
 import com.michaelnguyen.dto.response.ApiResponse;
 import com.michaelnguyen.dto.response.UserResponse;
 import com.michaelnguyen.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/admin")
 public class AdminController {
 
-	@Autowired
-	private UserService userService;
+    private final UserService userService;
 
-	@GetMapping("/get-all-users")
-	ApiResponse<?> getAllUsers() {
-		var authentication = SecurityContextHolder.getContext().getAuthentication();
+    public AdminController(UserService userService) {
+        this.userService = userService;
+    }
 
-		System.out.println("UserName: " + authentication.getName());
-		authentication.getAuthorities()
-				.forEach(grantedAuth -> System.out.println("Role: " + grantedAuth.getAuthority()));
+    @GetMapping("/get-all-users")
+    ApiResponse<?> getAllUsers() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		return ApiResponse.builder().result(userService.getAllUser()).build();
-	}
+        System.out.println("UserName: " + authentication.getName());
+        authentication.getAuthorities()
+                .forEach(grantedAuth -> System.out.println("Role: " + grantedAuth.getAuthority()));
 
-	@GetMapping("/get-user/{id}")
-	ApiResponse<?> getUserById(@PathVariable Long id) {
-		return ApiResponse.builder().result(userService.getUserById(id)).build();
-	}
+        return ApiResponse.builder().result(userService.getAllUser()).build();
+    }
 
-	/*
-	 * User management
-	 */
-	@PutMapping("/update-user/{id}")
-	public UserResponse updateUserByAdmin(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+    @GetMapping("/get-user/{id}")
+    ApiResponse<?> getUserById(@PathVariable Long id) {
+        return ApiResponse.builder().result(userService.getUserById(id)).build();
+    }
 
-		return userService.updateUserByAdmin(id, request);
-	}
+    /*
+     * User management
+     */
+    @PutMapping("/update-user/{id}")
+    public UserResponse updateUserByAdmin(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
 
-	@PutMapping("/update-role-user/{id}")
-	public UserResponse updateRolesUser(@PathVariable Long id,@RequestParam String roles) {
+        return userService.updateUserByAdmin(id, request);
+    }
 
-		return userService.updateRolesUser(id, roles);
-	}
+    @PutMapping("/update-role-user/{id}")
+    public UserResponse updateRolesUser(@PathVariable Long id, @RequestParam String roles) {
 
-	@DeleteMapping("/delete-user/{id}")
-	public void deleteUser(@PathVariable Long id) {
-		userService.delete(id);
-	}
+        return userService.updateRolesUser(id, roles);
+    }
 
-	/*
-	 * Product management
-	 */
+    @DeleteMapping("/delete-user/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.delete(id);
+    }
+
+    /*
+     * Product management
+     */
 }

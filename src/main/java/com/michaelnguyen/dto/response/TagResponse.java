@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TagResponse {
-	private int id;
-	private String name;
-	private String description;
- }
+    private int id;
+    private String name;
+    private String description;
+}

@@ -1,14 +1,7 @@
 package com.michaelnguyen.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,16 +14,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductImage {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id", nullable = false)
-	@JsonBackReference
-	private Product product;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    @JsonBackReference
+    private Product product;
 
- 	private String imageUrl;
+    private String imageUrl;
 
-	private boolean isPrimary;
+    private boolean isPrimary;
 }

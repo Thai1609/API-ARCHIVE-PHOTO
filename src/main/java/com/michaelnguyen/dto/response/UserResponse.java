@@ -1,14 +1,13 @@
 package com.michaelnguyen.dto.response;
 
-import java.util.List;
-
 import com.michaelnguyen.entity.Role;
 import com.michaelnguyen.entity.UserProfile;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,12 +15,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserResponse {
 
-	private Long id;
+    private Long id;
 
-	private String email;
+    private String email;
 
-	private UserProfile userProfile;
+    private UserProfile userProfile;
 
-	private List<Role> roles;
+    private List<Role> roles;
 
 }

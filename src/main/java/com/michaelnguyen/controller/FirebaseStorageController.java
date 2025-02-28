@@ -1,23 +1,24 @@
 package com.michaelnguyen.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.michaelnguyen.firebase.FirebaseStorageService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.michaelnguyen.firebase.FirebaseStorageService;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/storage")
 public class FirebaseStorageController {
 
-	@Autowired
-	private FirebaseStorageService firebaseStorageService;
+    private final FirebaseStorageService firebaseStorageService;
 
-	@GetMapping("/get-all-files")
-	public List<String> getAllJpgFiles() {
-		return firebaseStorageService.getAllJpgFiles();
-	}
+    public FirebaseStorageController(FirebaseStorageService firebaseStorageService) {
+        this.firebaseStorageService = firebaseStorageService;
+    }
+
+    @GetMapping("/get-all-files")
+    public List<String> getAllJpgFiles() {
+        return firebaseStorageService.getAllJpgFiles();
+    }
 }

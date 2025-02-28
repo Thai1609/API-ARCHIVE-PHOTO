@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UserCreationRequest {
-	private String email;
-	private String password;
- 	private String provider;
- 	private String providerId;
- 	private String name; 
-    private String imageUrl;  
+    private String email;
+    private String password;
+    private String provider;
+    private String providerId;
+    private String name;
+    private String imageUrl;
 }

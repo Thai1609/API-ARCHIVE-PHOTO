@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ProductImageRequest {
-	private String imageUrl;
-	private boolean isPrimary;
- }
+    private String imageUrl;
+    private boolean isPrimary;
+}

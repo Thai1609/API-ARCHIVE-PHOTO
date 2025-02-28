@@ -1,24 +1,16 @@
 package com.michaelnguyen.entity;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -27,38 +19,38 @@ import lombok.Setter;
 @Entity
 @Table(name = "user_profile")
 public class UserProfile {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Size(min = 3, message = "")
-	private String fullName;
-	
-	@Column(length = 1000)
-	private String avatarUrl;
+    @Size(min = 3, message = "")
+    private String fullName;
 
-	private String description;
+    @Column(length = 1000)
+    private String avatarUrl;
 
-	private String address;
-	
-	private String uid;
+    private String description;
+
+    private String address;
+
+    private String uid;
 
 
-	@Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number")
-	private String phoneNumber;
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number")
+    private String phoneNumber;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	private LocalDateTime dob;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDateTime dob;
 
-	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-	@OneToOne
-	@JoinColumn(name = "user_id")
-	@JsonBackReference
-	private User user;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
 
 }

@@ -1,21 +1,23 @@
 package com.michaelnguyen.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.michaelnguyen.entity.User;
 import com.michaelnguyen.entity.Wishlist;
 import com.michaelnguyen.repository.IWishlistRepository;
-
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class WishlistService {
-	@Autowired
-	private IWishlistRepository iWishlistRepository;
-	 // Get wishlist items by user
+
+    private final IWishlistRepository iWishlistRepository;
+
+    public WishlistService(IWishlistRepository iWishlistRepository) {
+        this.iWishlistRepository = iWishlistRepository;
+    }
+
+    // Get wishlist items by user
     public List<Wishlist> getWishlist(User user) {
         return iWishlistRepository.findByUser(user);
     }
@@ -30,6 +32,6 @@ public class WishlistService {
 
     @Transactional // Remove a product from wishlist
     public void removeFromWishlist(User user, String galleryId) {
-    	iWishlistRepository.deleteByUserAndGalleryId(user, galleryId);
+        iWishlistRepository.deleteByUserAndGalleryId(user, galleryId);
     }
 }

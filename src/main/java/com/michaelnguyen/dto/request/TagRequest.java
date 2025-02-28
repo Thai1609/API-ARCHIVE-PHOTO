@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TagRequest {
-	private String name;
-	private String description;
-	private Long userId;
+    private String name;
+    private String description;
+    private Long userId;
 
 }
