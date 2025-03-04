@@ -1,21 +1,5 @@
 package com.michaelnguyen.service;
 
-<<<<<<< HEAD
-=======
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import com.google.firebase.auth.FirebaseAuthException;
->>>>>>> origin/main
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.request.UserUpdateRequest;
 import com.michaelnguyen.dto.response.UserResponse;

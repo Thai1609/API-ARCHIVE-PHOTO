@@ -1,30 +1,9 @@
 package com.michaelnguyen.service;
 
-<<<<<<< HEAD
+
 import com.michaelnguyen.dto.request.IntrospectRequest;
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.request.UserLoginRequest;
-=======
-import java.text.ParseException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.StringJoiner;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import com.google.firebase.auth.FirebaseAuthException;
-import com.michaelnguyen.dto.request.IntrospectRequest;
-import com.michaelnguyen.dto.request.LoginRequest;
-import com.michaelnguyen.dto.request.UserCreationRequest;
->>>>>>> origin/main
 import com.michaelnguyen.dto.response.AuthenticationResponse;
 import com.michaelnguyen.dto.response.IntrospectResponse;
 import com.michaelnguyen.entity.User;
@@ -49,7 +28,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
-
 public class AuthenticationService {
 
     private final IUserRepository iUserRepository;
@@ -162,8 +140,7 @@ public class AuthenticationService {
 
             // Nếu Role có Permission, thêm các Permission vào chuỗi
             if (!CollectionUtils.isEmpty(role.getPermissions())) {
-                role.getPermissions().forEach(permission ->
-                        roleAndPermissions.add(permission.name())); // Sử dụng name() của Enum Permission
+                role.getPermissions().forEach(permission -> roleAndPermissions.add(permission.name())); // Sử dụng name() của Enum Permission
             }
         });
 

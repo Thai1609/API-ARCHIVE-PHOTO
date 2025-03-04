@@ -10,18 +10,6 @@ import org.mapstruct.Named;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-<<<<<<< HEAD
-=======
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
-
-import com.michaelnguyen.dto.response.ProductResponse;
-import com.michaelnguyen.entity.Product;
-import com.michaelnguyen.entity.ProductTag;
-
->>>>>>> origin/main
 @Mapper(componentModel = "spring")
 public interface IProductMapper {
     @Mapping(source = "category.name", target = "category")

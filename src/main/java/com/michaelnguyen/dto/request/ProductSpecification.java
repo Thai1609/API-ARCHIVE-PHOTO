@@ -3,10 +3,7 @@ package com.michaelnguyen.dto.request;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.michaelnguyen.entity.Product;
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/main
 import jakarta.persistence.criteria.Predicate;
 
 public class ProductSpecification {

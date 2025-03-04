@@ -1,10 +1,6 @@
 package com.michaelnguyen.dto.response;
 
 import com.michaelnguyen.entity.ProductImage;
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
