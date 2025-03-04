@@ -1,7 +1,11 @@
 package com.michaelnguyen.entity;
 
+<<<<<<< HEAD
 import jakarta.persistence.*;
 import lombok.*;
+=======
+import java.time.LocalDateTime;
+>>>>>>> origin/main
 
 import java.time.LocalDateTime;
 

@@ -1,5 +1,19 @@
 package com.michaelnguyen.controller;
 
+<<<<<<< HEAD
+=======
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+>>>>>>> origin/main
 import com.google.firebase.auth.FirebaseAuthException;
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.request.UserLoginRequest;

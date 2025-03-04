@@ -1,8 +1,13 @@
 package com.michaelnguyen.dto.request;
 
-import com.michaelnguyen.entity.Product;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+
+import com.michaelnguyen.entity.Product;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
+import jakarta.persistence.criteria.Predicate;
 
 public class ProductSpecification {
     public static Specification<Product> filterProducts(String name, Long categoryId, Long parentId, Long brandId,
