@@ -24,16 +24,18 @@ public class ProductService {
     private final IBrandRepository iBrandRepository;
     private final IProductImageRepository iProductImageRepository;
     private final UploadService uploadService;
-    @Qualifier("IProductMapper")
-    private IProductMapper iProductMapper;
+    private final IProductMapper iProductMapper;
 
-    public ProductService(IProductRepository iProductRepository, IUserRepository iUserRepository, ICategoryRepository iCategoryRepository, IBrandRepository iBrandRepository, IProductImageRepository iProductImageRepository, UploadService uploadService) {
+    public ProductService(IProductRepository iProductRepository, IUserRepository iUserRepository, ICategoryRepository iCategoryRepository,
+                          IBrandRepository iBrandRepository, IProductImageRepository iProductImageRepository,
+                          UploadService uploadService, IProductMapper iProductMapper) {
         this.iProductRepository = iProductRepository;
         this.iUserRepository = iUserRepository;
         this.iCategoryRepository = iCategoryRepository;
         this.iBrandRepository = iBrandRepository;
         this.iProductImageRepository = iProductImageRepository;
         this.uploadService = uploadService;
+        this.iProductMapper = iProductMapper;
     }
 
 
