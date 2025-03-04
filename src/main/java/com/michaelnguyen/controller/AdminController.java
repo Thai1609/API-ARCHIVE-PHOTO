@@ -28,14 +28,6 @@ public class AdminController {
         return ApiResponse.builder().result(userService.getAllUser()).build();
     }
 
-    @GetMapping("/get-user/{id}")
-    ApiResponse<?> getUserById(@PathVariable Long id) {
-        return ApiResponse.builder().result(userService.getUserById(id)).build();
-    }
-
-    /*
-     * User management
-     */
     @PutMapping("/update-user/{id}")
     public UserResponse updateUserByAdmin(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
 
@@ -48,12 +40,4 @@ public class AdminController {
         return userService.updateRolesUser(id, roles);
     }
 
-    @DeleteMapping("/delete-user/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.delete(id);
-    }
-
-    /*
-     * Product management
-     */
 }

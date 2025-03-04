@@ -2,6 +2,7 @@ package com.michaelnguyen.service;
 
 import com.michaelnguyen.dto.request.IntrospectRequest;
 import com.michaelnguyen.dto.request.UserCreationRequest;
+import com.michaelnguyen.dto.request.UserLoginRequest;
 import com.michaelnguyen.dto.response.AuthenticationResponse;
 import com.michaelnguyen.dto.response.IntrospectResponse;
 import com.michaelnguyen.entity.User;
@@ -62,7 +63,7 @@ public class AuthenticationService {
     }
 
     // Login with email and password
-    public AuthenticationResponse authenticateWithEmail(UserCreationRequest request) {
+    public AuthenticationResponse authenticateWithEmail(UserLoginRequest request) {
         Optional<User> user = iUserRepository.findByOptions(request.getEmail(), null, null);
         if (user.isEmpty()) throw new AppException(ErrorCode.UNAUTHENTICATED);
 

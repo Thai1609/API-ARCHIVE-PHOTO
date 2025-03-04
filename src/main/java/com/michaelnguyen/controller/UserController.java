@@ -1,15 +1,12 @@
 package com.michaelnguyen.controller;
 
 import com.michaelnguyen.dto.request.UserCreationRequest;
-import com.michaelnguyen.dto.request.UserProfileUpdateRequest;
 import com.michaelnguyen.dto.request.UserUpdateRequest;
 import com.michaelnguyen.dto.response.ApiResponse;
 import com.michaelnguyen.dto.response.UserResponse;
 import com.michaelnguyen.service.UserProfileService;
 import com.michaelnguyen.service.UserService;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("api/user")
@@ -34,15 +31,5 @@ public class UserController {
         return userService.updateUserByUser(id, request);
     }
 
-    @GetMapping("/{id}/profile")
-    ApiResponse<?> getUserProfileById(@PathVariable Long id) throws IOException {
-        return ApiResponse.builder().result(userProfileService.getUserProfileById(id)).build();
-    }
-
-    @PutMapping("/{id}/profile/update")
-    public UserProfileResponse updateUserProfile(@PathVariable Long id, @RequestBody UserProfileUpdateRequest request)
-            throws IOException {
-        return userProfileService.updateUserProfile(id, request);
-    }
 
 }

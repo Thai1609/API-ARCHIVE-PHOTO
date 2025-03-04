@@ -1,6 +1,5 @@
 package com.michaelnguyen.service;
 
-import com.google.firebase.auth.FirebaseAuthException;
 import com.michaelnguyen.dto.request.UserCreationRequest;
 import com.michaelnguyen.dto.request.UserUpdateRequest;
 import com.michaelnguyen.dto.response.UserResponse;
@@ -13,7 +12,6 @@ import com.michaelnguyen.repository.IRoleRepository;
 import com.michaelnguyen.repository.IUserRepository;
 import com.michaelnguyen.repository.IVerificationTokenRepository;
 import com.michaelnguyen.repository.UserRepositoryCustom;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,7 +39,13 @@ public class UserService {
 
     private final UserProfileService userProfileService;
 
-    public UserService(IUserRepository iUserRepository, UserRepositoryCustom userRepositoryCustom, IRoleRepository iRoleRepository, PasswordEncoder passwordEncoder, IVerificationTokenRepository iVerificationTokenRepository, @Qualifier("IUserMapper") IUserMapper iUserMapper, UserProfileService userProfileService) {
+    public UserService(IUserRepository iUserRepository,
+                       UserRepositoryCustom userRepositoryCustom,
+                       IRoleRepository iRoleRepository,
+                       PasswordEncoder passwordEncoder,
+                       IVerificationTokenRepository iVerificationTokenRepository,
+                       IUserMapper iUserMapper,
+                       UserProfileService userProfileService) {
         this.iUserRepository = iUserRepository;
         this.userRepositoryCustom = userRepositoryCustom;
         this.iRoleRepository = iRoleRepository;
@@ -51,7 +55,8 @@ public class UserService {
         this.userProfileService = userProfileService;
     }
 
-    public UserResponse createUser(UserCreationRequest request) throws FirebaseAuthException {
+
+    public UserResponse createUser(UserCreationRequest request) {
         Optional<User> user = iUserRepository.findByOptions(request.getEmail(), null, null);
 
         if (user.isPresent()) throw new AppException(ErrorCode.EMAIL_EXIST);
@@ -101,20 +106,8 @@ public class UserService {
         return iUserMapper.toUserResponse(user.get());
     }
 
-    public UserResponse getUserById(Long id) {
-        return iUserMapper.toUserResponse(iUserRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST)));
-
-    }
-
     public List<UserResponse> getAllUser() {
         return iUserRepository.findAll().stream().map(iUserMapper::toUserResponse).toList();
-    }
-
-    public UserResponse delete(Long id) {
-        User user = iUserRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
-        iUserRepository.delete(user);
-        return iUserMapper.toUserResponse(user);
-
     }
 
     public UserResponse updateUserByAdmin(Long id, UserUpdateRequest request) {

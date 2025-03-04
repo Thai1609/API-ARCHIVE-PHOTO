@@ -2,6 +2,7 @@ package com.michaelnguyen.controller;
 
 import com.google.firebase.auth.FirebaseAuthException;
 import com.michaelnguyen.dto.request.UserCreationRequest;
+import com.michaelnguyen.dto.request.UserLoginRequest;
 import com.michaelnguyen.dto.response.ApiResponse;
 import com.michaelnguyen.dto.response.AuthenticationResponse;
 import com.michaelnguyen.dto.response.UserResponse;
@@ -38,7 +39,7 @@ public class AuthenticationController {
     private final EmailService emailService;
 
     @PostMapping("/login")
-    ApiResponse<AuthenticationResponse> authenticateWithEmail(@RequestBody UserCreationRequest request) {
+    ApiResponse<AuthenticationResponse> authenticateWithEmail(@RequestBody UserLoginRequest request) {
         var result = authenticationService.authenticateWithEmail(request);
 
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
@@ -54,11 +55,6 @@ public class AuthenticationController {
     @PostMapping("/signup")
     UserResponse createUser(@RequestBody @Valid UserCreationRequest request) throws FirebaseAuthException {
         return userService.createUser(request);
-    }
-
-    @PostMapping("/delete-user")
-    UserResponse deleteUser(@RequestParam("userId") Long userId) {
-        return userService.delete(userId);
     }
 
     @PostMapping("/forgot")
