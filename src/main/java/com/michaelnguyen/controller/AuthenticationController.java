@@ -53,7 +53,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    UserResponse createUser(@RequestBody @Valid UserCreationRequest request) throws FirebaseAuthException {
+    UserResponse createUser(@RequestBody @Valid UserCreationRequest request)  {
         return userService.createUser(request);
     }
 

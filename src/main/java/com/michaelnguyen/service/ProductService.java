@@ -7,7 +7,6 @@ import com.michaelnguyen.entity.*;
 import com.michaelnguyen.firebase.UploadService;
 import com.michaelnguyen.mapper.IProductMapper;
 import com.michaelnguyen.repository.*;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,9 +25,12 @@ public class ProductService {
     private final UploadService uploadService;
     private final IProductMapper iProductMapper;
 
-    public ProductService(IProductRepository iProductRepository, IUserRepository iUserRepository, ICategoryRepository iCategoryRepository,
-                          IBrandRepository iBrandRepository, IProductImageRepository iProductImageRepository,
-                          UploadService uploadService, IProductMapper iProductMapper) {
+    public ProductService(IProductRepository iProductRepository,
+            IUserRepository iUserRepository,
+            ICategoryRepository iCategoryRepository,
+            IBrandRepository iBrandRepository,
+            IProductImageRepository iProductImageRepository,
+            UploadService uploadService, IProductMapper iProductMapper) {
         this.iProductRepository = iProductRepository;
         this.iUserRepository = iUserRepository;
         this.iCategoryRepository = iCategoryRepository;
@@ -39,11 +41,13 @@ public class ProductService {
     }
 
 
-    public Page<Product> getProducts(String name, Long categoryId, Long parentId, Long brandId, Double minPrice,
-                                     Double maxPrice, Pageable pageable) {
+    public Page<Product> getProducts(String name, Long categoryId,
+            Long parentId, Long brandId, Double minPrice,
+            Double maxPrice, Pageable pageable) {
 
         return iProductRepository.findAll(
-                ProductSpecification.filterProducts(name, categoryId, parentId, brandId, minPrice, maxPrice), pageable);
+                ProductSpecification.filterProducts(name, categoryId,
+                        parentId, brandId, minPrice, maxPrice), pageable);
     }
 
     // Lấy sản phẩm theo ID
@@ -70,13 +74,16 @@ public class ProductService {
         iProductRepository.deleteById(id);
     }
 
-    public ProductResponse uploadProduct(List<MultipartFile> multipartFiles, ProductUploadRequest request) {
+    public ProductResponse uploadProduct(List<MultipartFile> multipartFiles,
+            ProductUploadRequest request) {
 
         Optional<User> user = iUserRepository.findById(request.getUserId());
 
-        Optional<Category> category = iCategoryRepository.findById(request.getCategoryId());
+        Optional<Category> category =
+                iCategoryRepository.findById(request.getCategoryId());
 
-        Brand brand = request.getBrandId() != null ? iBrandRepository.findById(request.getBrandId()).orElse(null)
+        Brand brand = request.getBrandId() != null ?
+                iBrandRepository.findById(request.getBrandId()).orElse(null)
                 : null;
 
         Product product = new Product();
@@ -96,13 +103,20 @@ public class ProductService {
         String brandName = (brand != null) ? brand.getName() : "NoBrand";
 
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            for (MultipartFile file : multipartFiles) {
+            MultipartFile file = null;
+            for (int i = 0; i < multipartFiles.size(); i++) {
+                file = multipartFiles.get(i);
 
-                String uploadPath = "products/" + category.get().getName() + "/" + brandName + "/";
+                String uploadPath = "products/" + category.get().getName() +
+                        "/" + brandName + "/";
                 // save productImage in database
                 ProductImage productImage = new ProductImage();
                 productImage.setProduct(newProduct);
-                productImage.setImageUrl(uploadService.upload(file, uploadPath));
+                productImage.setImageUrl(uploadService.upload(file,
+                        uploadPath));
+                if (i == 0) {
+                    productImage.setPrimary(true);
+                }
                 iProductImageRepository.save(productImage);
             }
         }

@@ -18,7 +18,6 @@ public class ProductUploadRequest {
     private BigDecimal price;
     private BigDecimal discount;
     private int stock;
-
     private Long categoryId;
     private Long brandId;
     private Long userId;

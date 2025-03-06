@@ -16,6 +16,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.transaction.Transactional;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +40,10 @@ public class AuthenticationService {
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
 
-    public AuthenticationService(IUserRepository iUserRepository, IRoleRepository iRoleRepository, UserProfileService userProfileService, PasswordEncoder passwordEncoder) {
+    public AuthenticationService(IUserRepository iUserRepository,
+            IRoleRepository iRoleRepository,
+            UserProfileService userProfileService,
+            PasswordEncoder passwordEncoder) {
         this.iUserRepository = iUserRepository;
         this.iRoleRepository = iRoleRepository;
         this.userProfileService = userProfileService;
@@ -47,7 +51,8 @@ public class AuthenticationService {
     }
 
 
-    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
+    public IntrospectResponse introspect(IntrospectRequest request)
+            throws JOSEException, ParseException {
         var token = request.getToken();
 
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
@@ -64,10 +69,14 @@ public class AuthenticationService {
 
     // Login with email and password
     public AuthenticationResponse authenticateWithEmail(UserLoginRequest request) {
-        Optional<User> user = iUserRepository.findByOptions(request.getEmail(), null, null);
+        Optional<User> user =
+                iUserRepository.findByOptions(request.getEmail(),
+                        "credentials", null);
         if (user.isEmpty()) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        boolean authentication = passwordEncoder.matches(request.getPassword(), user.get().getPassword());
+        boolean authentication =
+                passwordEncoder.matches(request.getPassword(),
+                        user.get().getPassword());
         if (!authentication) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         var token = generateToken(user.get());
@@ -77,40 +86,52 @@ public class AuthenticationService {
     }
 
     // Login with Provider
+    @Transactional
     public AuthenticationResponse authenticateWithProvider(UserCreationRequest request) {
+        try {
+            Optional<User> userCheck =
+                    iUserRepository.findByOptions(request.getEmail(),
+                            request.getProvider(), request.getProviderId());
 
-        Optional<User> userCheck = iUserRepository.findByOptions(request.getEmail(), request.getProvider(), request.getProviderId());
+            if (userCheck.isPresent()) {
+                var token = generateToken(userCheck.get());
+                return AuthenticationResponse.builder().token(token).authenticated(true).build();
+            }
 
-        if (userCheck.isPresent()) {
-            var token = generateToken(userCheck.get());
+            // Register new user if not found
+            User newUser = new User();
+            newUser.setEmail(request.getEmail());
+            newUser.setProvider(request.getProvider());
+            newUser.setProviderId(request.getProviderId());
+
+            var roles = iRoleRepository.findAllById(List.of("USER"));
+            newUser.setRoles(new HashSet<>(roles));
+
+            newUser = iUserRepository.save(newUser);
+
+            Optional<User> user =
+                    iUserRepository.findByOptions(request.getEmail(),
+                            request.getProvider(), request.getProviderId());
+
+            userProfileService.createUserProfile(user.get().getId(), request);
+
+            var token = generateToken(user.get());
+
             return AuthenticationResponse.builder().token(token).authenticated(true).build();
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
         }
 
-        // Register new user if not found
-        User newUser = new User();
-        newUser.setEmail(request.getEmail());
-        newUser.setProvider(request.getProvider());
-        newUser.setProviderId(request.getProviderId());
-
-        var roles = iRoleRepository.findAllById(List.of("USER"));
-        newUser.setRoles(new HashSet<>(roles));
-
-        newUser = iUserRepository.save(newUser);
-
-        Optional<User> user = iUserRepository.findByOptions(request.getEmail(), request.getProvider(), request.getProviderId());
-
-        userProfileService.createUserProfile(user.get().getId(), request);
-
-        var token = generateToken(user.get());
-
-        return AuthenticationResponse.builder().token(token).authenticated(true).build();
 
     }
 
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
-        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getEmail()).issuer("michael").issueTime(new Date()).expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli())).claim("scope", buildRole(user)).build();
+        JWTClaimsSet jwtClaimsSet =
+                new JWTClaimsSet.Builder().subject(user.getEmail()).issuer(
+                        "michael").issueTime(new Date()).expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli())).claim("scope", buildRole(user)).build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
