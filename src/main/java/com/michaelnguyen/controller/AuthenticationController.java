@@ -25,7 +25,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -37,6 +36,16 @@ public class AuthenticationController {
     private final IUserRepository iUserRepository;
 
     private final EmailService emailService;
+
+    public AuthenticationController(AuthenticationService authenticationService, UserService userService,
+            IVerificationTokenRepository iVerificationTokenRepository, IUserRepository iUserRepository,
+            EmailService emailService) {
+        this.authenticationService = authenticationService;
+        this.userService = userService;
+        this.iVerificationTokenRepository = iVerificationTokenRepository;
+        this.iUserRepository = iUserRepository;
+        this.emailService = emailService;
+    }
 
     @PostMapping("/login")
     ApiResponse<AuthenticationResponse> authenticateWithEmail(@RequestBody UserLoginRequest request) {

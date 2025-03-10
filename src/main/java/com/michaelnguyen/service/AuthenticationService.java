@@ -17,7 +17,6 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import jakarta.transaction.Transactional;
-import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,6 @@ public class AuthenticationService {
     private final UserProfileService userProfileService;
     private final PasswordEncoder passwordEncoder;
 
-    @NonFinal
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
 
@@ -71,13 +69,13 @@ public class AuthenticationService {
     public AuthenticationResponse authenticateWithEmail(UserLoginRequest request) {
         Optional<User> user =
                 iUserRepository.findByOptions(request.getEmail(),
-                        "credentials", null);
+                                              "credentials", null);
         if (user.isEmpty()) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        boolean authentication =
+        boolean checkPassword =
                 passwordEncoder.matches(request.getPassword(),
-                        user.get().getPassword());
-        if (!authentication) throw new AppException(ErrorCode.UNAUTHENTICATED);
+                                        user.get().getPassword());
+        if (!checkPassword) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         var token = generateToken(user.get());
 
@@ -91,7 +89,7 @@ public class AuthenticationService {
         try {
             Optional<User> userCheck =
                     iUserRepository.findByOptions(request.getEmail(),
-                            request.getProvider(), request.getProviderId());
+                                                  request.getProvider(), request.getProviderId());
 
             if (userCheck.isPresent()) {
                 var token = generateToken(userCheck.get());
@@ -111,7 +109,7 @@ public class AuthenticationService {
 
             Optional<User> user =
                     iUserRepository.findByOptions(request.getEmail(),
-                            request.getProvider(), request.getProviderId());
+                                                  request.getProvider(), request.getProviderId());
 
             userProfileService.createUserProfile(user.get().getId(), request);
 
@@ -131,7 +129,9 @@ public class AuthenticationService {
 
         JWTClaimsSet jwtClaimsSet =
                 new JWTClaimsSet.Builder().subject(user.getEmail()).issuer(
-                        "michael").issueTime(new Date()).expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli())).claim("scope", buildRole(user)).build();
+                        "michael").issueTime(new Date()).expirationTime(
+                        new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli())).claim("scope", buildRole(
+                        user)).build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
@@ -161,7 +161,8 @@ public class AuthenticationService {
 
             // Nếu Role có Permission, thêm các Permission vào chuỗi
             if (!CollectionUtils.isEmpty(role.getPermissions())) {
-                role.getPermissions().forEach(permission -> roleAndPermissions.add(permission.name())); // Sử dụng name() của Enum Permission
+                role.getPermissions().forEach(
+                        permission -> roleAndPermissions.add(permission.name())); // Sử dụng name() của Enum Permission
             }
         });
 
