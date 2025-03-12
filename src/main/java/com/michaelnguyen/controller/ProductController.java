@@ -48,13 +48,20 @@ public class ProductController {
         return product.map(p -> ResponseEntity.ok(iProductMapper.toProductResponse(p)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+    // Lấy sản phẩm theo User
+    @GetMapping("/user/{id}")
+    public List<ProductResponse> getProductsByUserId(@PathVariable Long id) {
+        List<Product> product = productService.getProductsByUserId(id);
+        return  iProductMapper.toProductResponse(product);
 
-    // Thêm sản phẩm mới
-//	@PostMapping
-//	public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-//		Product savedProduct = productService.addProduct(product);
-//		return ResponseEntity.ok(savedProduct);
-//	}
+    }
+    // Lấy sản phẩm theo Category
+    @GetMapping("/category/{id}")
+    public List<ProductResponse> getProductsByCategoryId(@PathVariable Long id) {
+        List<Product> product = productService.getProductsByCategoryId(id);
+        return  iProductMapper.toProductResponse(product);
+
+    }
     @PostMapping(value = "/upload-product", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {
             MediaType.APPLICATION_JSON_VALUE})
     public ProductResponse createProduct(@RequestPart("file") List<MultipartFile> multipartFile,

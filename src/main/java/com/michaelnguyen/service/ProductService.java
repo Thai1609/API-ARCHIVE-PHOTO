@@ -47,15 +47,33 @@ public class ProductService {
 
         return iProductRepository.findAll(
                 ProductSpecification.filterProducts(name, categoryId,
-                        parentId, brandId, minPrice, maxPrice), pageable);
+                                                    parentId, brandId, minPrice, maxPrice), pageable);
     }
 
-    // Lấy sản phẩm theo ID
+
     public Optional<Product> getProductById(Long id) {
         return iProductRepository.findById(id);
     }
 
-    // Cập nhật sản phẩm
+
+    public List<Product> getProductsByUserId(Long id) {
+        Optional<User> user = iUserRepository.findById(id);
+        if (user.isEmpty()) {
+            return null;
+        }
+
+        return iProductRepository.findProductByUser_Id(id);
+    }
+
+    public List<Product> getProductsByCategoryId(Long id) {
+        Optional<Category> category = iCategoryRepository.findById(id);
+        if (category.isEmpty()) {
+            return null;
+        }
+
+        return iProductRepository.findProductByCategory_Id(id);
+    }
+
     public Optional<Product> updateProduct(Long id, Product productDetails) {
         return iProductRepository.findById(id).map(product -> {
             product.setName(productDetails.getName());
@@ -69,7 +87,6 @@ public class ProductService {
         });
     }
 
-    // Xóa sản phẩm theo ID
     public void deleteProduct(Long id) {
         iProductRepository.deleteById(id);
     }
@@ -113,7 +130,7 @@ public class ProductService {
                 ProductImage productImage = new ProductImage();
                 productImage.setProduct(newProduct);
                 productImage.setImageUrl(uploadService.upload(file,
-                        uploadPath));
+                                                              uploadPath));
                 if (i == 0) {
                     productImage.setPrimary(true);
                 }

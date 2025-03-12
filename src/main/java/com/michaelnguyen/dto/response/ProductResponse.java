@@ -1,5 +1,6 @@
 package com.michaelnguyen.dto.response;
 
+import com.michaelnguyen.entity.Category;
 import com.michaelnguyen.entity.ProductImage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,10 +21,8 @@ public class ProductResponse {
     private BigDecimal price;
     private BigDecimal discount;
     private int stock;
-    private String status;
-    private String category;
+    private Category category;
     private String brand;
-    private String seller;
     private UserResponse user;
     private Set<ProductImage> images;
     private Set<ProductVariantResponse> variants;

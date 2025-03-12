@@ -25,6 +25,9 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String volume ;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
@@ -52,6 +55,11 @@ public class Product {
     @JoinColumn(name = "brand_id")
     @JsonBackReference
     private Brand brand;
+
+    @ManyToOne
+    @JoinColumn(name = "origin_id")
+    @JsonBackReference
+    private Origin origin;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonManagedReference

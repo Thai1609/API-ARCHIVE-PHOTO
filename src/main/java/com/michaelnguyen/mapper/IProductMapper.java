@@ -7,15 +7,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface IProductMapper {
-    @Mapping(source = "category.name", target = "category")
     @Mapping(source = "brand.name", target = "brand")
     @Mapping(source = "tags", target = "tags", qualifiedByName = "mapTags")
-    @Mapping(source = "status", target = "status", qualifiedByName = "mapStatus")
     ProductResponse toProductResponse(Product product);
 
     @Named("mapTags")
@@ -30,4 +29,7 @@ public interface IProductMapper {
     default String mapStatus(Enum<?> status) {
         return status != null ? status.name() : "UNKNOWN";
     }
+
+    List<ProductResponse> toProductResponse(List<Product> products);
+
 }
